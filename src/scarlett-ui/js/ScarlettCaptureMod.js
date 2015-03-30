@@ -120,7 +120,7 @@ function scarletteCapture($log) {
             // use 1st input line to collect enums [common/shared pool for all capture/sources]
             var sourceref = modelvalue.sources[1].ctrl.enums;
             for (var idx=0; idx < sourceref.length; idx ++) {
-                scope.matrixSourcesPool.push({id: idx, name:  sourceref [idx], used: false, options: []});
+                scope.matrixSourcesPool.push({id: idx, name: sourceref [idx], used: false, options: []});
             };
 
             // processing input capture lines
@@ -210,7 +210,7 @@ function scarletteCapture($log) {
         };
 
         scope.takeLinePool= function (linesPool, lineIdx) {
-            if (lineIdx == 0 || scope.matrixRoutesPool[lineIdx].used) return;
+            if (lineIdx == 0 || linesPool[lineIdx].used) return;
             scope.updatePool (linesPool, lineIdx, true);
         };
 
@@ -221,8 +221,8 @@ function scarletteCapture($log) {
 
         // export call back
         scope.matrixSourcesPoolCB = {
-            take: function (lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, lineIdx)} ,
-            free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
+           take: function (lineIdx) {scope.takeLinePool (scope.matrixSourcesPool, lineIdx)} ,
+           free: function (lineIdx) {scope.freeLinePool (scope.matrixSourcesPool, lineIdx)}
         };
 
         // export call back

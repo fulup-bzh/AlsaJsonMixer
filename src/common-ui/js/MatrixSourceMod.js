@@ -82,6 +82,9 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
         scope.selected = function () {
             scope.selection = scope.selectElem.value;
 
+
+            console.log ("1 selection callback")
+
             // if selection is undefined ignore request
             if (scope.selection === undefined) return;
 
@@ -153,6 +156,7 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
             // ignore initial empty events
             if (!channel) return;
 
+            console.log ("slection callback")
             // free channel 1st in case same one was reselected
             scope.callback.free (channel.value);
             scope.callback.take (selection);
