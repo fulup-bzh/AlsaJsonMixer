@@ -1,5 +1,5 @@
 /*
- alsa-gateway -- provide a REST/HTTP interface to ALSA-Mixer
+ alsa-gateway -- provide a REST/HTTP interface to ALSA-Voler
 
  Copyright (C) 2015, Fulup Ar Foll
 
@@ -36,35 +36,49 @@ function scarletteCapture($log) {
 
     function link (scope, elem, attrs, model) {
 
-        scope.matrixSourcePool = []; // inputs lines belongs to a common shared pool.
+        scope.matrixSourcesPool = []; // inputs lines belongs to a common shared pool.
+        scope.matrixRoutesPool  = []; // output lines belongs to a common shared pool.
+
+        // parse input/output Source/Route params
+        scope.ProcessRouteSource = function (line) {
+
+            var params = {
+                name:  line.name,
+                actif: line.actif,
+                numid: line.numid,
+                value: line.value,
+                line:  line
+            };
+            return params;
+        };
 
 
         // parse Matrix Playback and Route to create a mono volume matrix mix
-        scope.ProcessVolumeMix = function (matrixMix) {
+        scope.ProcessVolume = function (matrixVol) {
 
-            var mixName =  "Mix-" + matrixMix.name;
+            var mixName =  "Vol-" + matrixVol.name;
 
             // if no volumes defined we are facing a switch
-            if (matrixMix.volumes.length == 0) {
-                var volumeMix = {
+            if (matrixVol.volumes.length == 0) {
+                var volumeVol = {
                     name : mixName,
-                    numid: matrixMix.route.numid,
-                    title: matrixMix.route.name
+                    numid: matrixVol.route.numid,
+                    title: matrixVol.route.name
                 }
             } else {
-                var volumeMix = {
+                var volumeVol = {
                     name    : mixName,
                     volumes : []
                 };
 
                 // processing playback volumes
-                for (var idx = 0; idx < matrixMix.volumes.length; idx = idx + 2) {
+                for (var idx = 0; idx < matrixVol.volumes.length; idx = idx + 2) {
 
-                    var left  = matrixMix.volumes [idx];
-                    var right = matrixMix.volumes [idx + 1];
+                    var left  = matrixVol.volumes [idx];
+                    var right = matrixVol.volumes [idx + 1];
 
                     var fader = {
-                        left: {
+                        leftLine: {
                             id     : left.numid,
                             actif  : left.actif,
                             value  : left.value[0],
@@ -75,7 +89,7 @@ function scarletteCapture($log) {
                             //tlv  : left.tlv
                             //acl  : left.acl
                         },
-                        right: {
+                        rightLine: {
                             id     : right.numid,
                             actif  : right.actif,
                             value  : right.value[0],
@@ -87,10 +101,10 @@ function scarletteCapture($log) {
                             //acl  : left.acl
                         }
                     };
-                    volumeMix.volumes.push(fader);
+                    volumeVol.volumes.push(fader);
                 }
             }
-            return volumeMix;
+            return volumeVol;
         };
         
         // call when internal model value changes
@@ -99,103 +113,122 @@ function scarletteCapture($log) {
             if (!modelvalue) return; // make sure we have some data to work with
 
             // prepare array to pass date to widget
-            var mixerSources = [];
-            var mixesVolumes = [];
+            var matrixSources = [];
+            var matrixRoutes = [];
+            var matrixVolumes = [];
 
-            // use 1st input line to collect enums as this is a global common/shared pool
+            // use 1st input line to collect enums [common/shared pool for all capture/sources]
             var sourceref = modelvalue.sources[1].ctrl.enums;
             for (var idx=0; idx < sourceref.length; idx ++) {
-                scope.matrixSourcePool.push({id: idx, name:  sourceref [idx], used: false, options: []});
+                scope.matrixSourcesPool.push({id: idx, name:  sourceref [idx], used: false, options: []});
             };
 
-            // processing input lines
+            // processing input capture lines
             for (var idx = 0; idx < modelvalue.sources.length; idx = idx + 2) {
-                var leftInput  = modelvalue.sources [idx];
-                var rightInput = modelvalue.sources [idx + 1];
+
+                var leftLine  = modelvalue.sources [idx];
+                var rightLine = modelvalue.sources [idx + 1];
                 var label = '[' + (idx + 1) + '/' + (idx + 2) + ']';
-                var input = {
-                    uid: leftInput.numid + '-' + rightInput.numid,
-                    title: "Stereo Capture Input " + label,
+                var stereolines = {
+                    uid: leftLine.numid + '-' + rightLine.numid,
+                    title: "Stereo Capture Line " + label,
                     label: 'Line ' + label,
-                    name : 'Capt ' + label,
-                    matrixSourcePool  : scope.matrixSourcePool,
-
-                    left: {
-                        name:  leftInput.name,
-                        actif: leftInput.actif,
-                        numid: leftInput.numid,
-                        value: leftInput.value
-                    },
-                    right: {
-                        name : rightInput.name,
-                        actif: rightInput.actif,
-                        numid: rightInput.numid,
-                        value: rightInput.value
-                    }
+                    name: 'Capt ' + label,
+                    matrixLinesPool: scope.matrixSourcesPool,
+                    leftLine : scope.ProcessRouteSource(leftLine),
+                    rightLine: scope.ProcessRouteSource(rightLine)
                 };
-                //$log.log (idx, "sources [idx]", leftInput, "source[1]", rightInput)
 
-                mixerSources.push(input)
+                //$log.log ("[idx]", idx, "stereo line=", stereolines)
+                matrixSources.push(stereolines);
+            }
+            
+            // use 1st output line to collect enums [global common/shared pool for all output/route]
+            var routeref = modelvalue.routes[1].ctrl.enums;
+            for (var idx=0; idx < routeref.length; idx ++) {
+                scope.matrixRoutesPool.push ({id: idx , name:  routeref [idx], used: false, options: []});
+            };
+            // $log.log ("matrixRoutesPool=", scope.matrixRoutesPool);
+
+            // processing input capture lines
+            for (var idx = 0; idx < modelvalue.routes.length; idx = idx + 2) {
+
+                var leftLine  = modelvalue.routes [idx];
+                var rightLine = modelvalue.routes [idx + 1];
+                var label = '[' + (idx + 1) + '/' + (idx + 2) + ']';
+                var stereolines = {
+                    uid: leftLine.numid + '-' + rightLine.numid,
+                    title: "Stereo Output Route" + label,
+                    label: 'Route ' + label,
+                    name: 'Out '  + label,
+                    matrixLinesPool: scope.matrixRoutesPool,
+                    leftLine : scope.ProcessRouteSource(leftLine),
+                    rightLine: scope.ProcessRouteSource(rightLine)
+                };
+
+                //$log.log ("[idx]", idx, "stereo line=", stereolines)
+                matrixRoutes.push(stereolines);
             }
 
             // groupe Matrix mix as stereo output channel
-            for (var mixIdx = 0; mixIdx < modelvalue.mixes.length; mixIdx = mixIdx +2) {
-                var leftMix   = modelvalue.mixes [mixIdx];
-                var rightMix  = modelvalue.mixes [mixIdx+1];
+            for (var volIdx = 0; volIdx < modelvalue.volumes.length; volIdx = volIdx +2) {
+                var leftVol   = modelvalue.volumes [volIdx];
+                var rightVol  = modelvalue.volumes [volIdx+1];
 
-                var stereoMix = {
-                    name  : "Mix-" + leftMix.name + " / " + rightMix.name,
-                    left  : [],
-                    right : []
+                var stereoVol = {
+                    name  : "Vol-" + leftVol.name + " / " + rightVol.name,
+                    leftLine  : [],
+                    rightLine : []
                 };
                 // build a stereo volume mix
 
-                $log.log ("leftMix=", leftMix, "rightMix=", rightMix)
-                stereoMix.left = scope.ProcessVolumeMix (leftMix);
-                stereoMix.right= scope.ProcessVolumeMix (rightMix);
-                mixesVolumes.push (stereoMix);
+                // $log.log ("leftVol=", leftVol, "rightVol=", rightVol)
+                stereoVol.leftLine = scope.ProcessVolume (leftVol);
+                stereoVol.rightLine= scope.ProcessVolume (rightVol);
+                matrixVolumes.push (stereoVol);
             }
 
             // update scope in one big chunk to avoid flickering
-            scope.mixerSources = mixerSources;
-            scope.mixesVolumes = mixesVolumes;
+            scope.matrixSources = matrixSources;
+            scope.matrixRoutes  = matrixRoutes;
+            scope.matrixVolumes = matrixVolumes;
 
-            // $log.log ("mixerSources="  , mixerSources);
-            $log.log ("mixesVolumes="  , mixesVolumes);
+            // $log.log ("matrixSources=" , matrixSources);
+            // $log.log ("matrixRoutes="  , matrixRoutes);
+            // $log.log ("matrixVolumes=" , matrixVolumes);
             //}
         }); // end formatter
 
-        scope.updatePool=function (lineIdx, used) {
-
+        scope.updatePool=function (linesPool, lineIdx, used) {
             // change line usage status
-            scope.matrixSourcePool[lineIdx].used = used;
+            linesPool[lineIdx].used = used;
 
             // update select source options to disable used lines
-            for (var idx=0; idx < scope.matrixSourcePool[lineIdx].options.length; idx++) {
-                scope.matrixSourcePool[lineIdx].options[idx].disabled=used;
+            for (var idx=0; idx < linesPool[lineIdx].options.length; idx++) {
+                linesPool[lineIdx].options[idx].disabled=used;
             }
         };
 
-        // lock an input line from matrixSourcePool
-        scope.takeLineInPool= function (lineIdx) {
-
-            // if lineIdx is used or null ignore request
-            if (lineIdx == 0 || scope.matrixSourcePool[lineIdx].used) return;
-
-            scope.updatePool (lineIdx, true);
+        scope.takeLinePool= function (linesPool, lineIdx) {
+            if (lineIdx == 0 || scope.matrixRoutesPool[lineIdx].used) return;
+            scope.updatePool (linesPool, lineIdx, true);
         };
 
-        // return an input line matrixSourcePool
-        scope.freeLineInPool= function (lineIdx) {
-
+        scope.freeLinePool= function (linesPool, lineIdx) {
             if (lineIdx == 0) return;
-            scope.updatePool (lineIdx, false);
+            scope.updatePool (linesPool, lineIdx, false);
         };
 
         // export call back
-        scope.matrixSourcePoolCB = {
-           take: scope.takeLineInPool,
-           free: scope.freeLineInPool
+        scope.matrixSourcesPoolCB = {
+            take: function (lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, lineIdx)} ,
+            free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
+        };
+
+        // export call back
+        scope.matrixRoutesPoolCB = {
+           take: function (lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, lineIdx)} ,
+           free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
         };
 
     };

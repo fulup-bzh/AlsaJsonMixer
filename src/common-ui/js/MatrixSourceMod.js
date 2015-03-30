@@ -59,17 +59,17 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
             scope.selectElem.value = modelvalue.value;
         });
 
-        // we need to wait for matrixSourcePool to be ready before building selection list
-        scope.$watch ('matrixSourcePool', function () {
+        // we need to wait for matrixLinesPool to be ready before building selection list
+        scope.$watch ('matrixLinesPool', function () {
             // default value is off
 
             // select is first child in template, remove 1st empty option
             var parent = element[0].firstChild; // get select
-            for (var idx = 0; idx < scope.matrixSourcePool.length; idx++) {
-                var option = addOption(scope.matrixSourcePool[idx], parent);
-                scope.matrixSourcePool[idx].options.push (option);
+            for (var idx = 0; idx < scope.matrixLinesPool.length; idx++) {
+                var option = addOption(scope.matrixLinesPool[idx], parent);
+                scope.matrixLinesPool[idx].options.push (option);
 
-                if (scope.matrixSourcePool[idx].used) {
+                if (scope.matrixLinesPool[idx].used) {
                     option.disabled = true;
                 } else  if (scope.volume && scope.volume.value === idx) {
                     scope.callback (scope.volume, idx);
@@ -85,7 +85,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
             // if selection is undefined ignore request
             if (scope.selection === undefined) return;
 
-            if (scope.matrixSourcePool [scope.selection].used) {
+            if (scope.matrixLinesPool [scope.selection].used) {
                 scope.selection = scope.volume.value;
                 return;
             }
@@ -98,7 +98,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
         scope: {
             channel    : '=',
             callback   : '=',
-            matrixSourcePool: '='
+            matrixLinesPool: '='
         },
         restrict: 'E',
         require: 'ngModel',
@@ -111,15 +111,16 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
 
     var template
    = '<div class="small-1 columns ajg-stereo-input">'
-   + '<line-input class="ajg-select-left"  matrix-source-pool="matrixSourcePool" ng-model=leftChannel  callback="selected"></line-input>'
-   + '<line-input class="ajg-select-right" matrix-source-pool="matrixSourcePool" ng-model=rightChannel callback="selected"></line-input>'
-   + '<input type="text" class="ajg-stereo-input-linein" value="{{label}}">'
+   + '<input ng-show="route" type="text" class="ajg-stereo-input-linein" value="{{label}}">'
+   + '<line-input class="ajg-select-left"  matrix-lines-pool="matrixLinesPool" ng-model=leftLine  callback="selected"></line-input>'
+   + '<line-input class="ajg-select-right" matrix-lines-pool="matrixLinesPool" ng-model=rightLine callback="selected"></line-input>'
+   + '<input ng-show="source" type="text" class="ajg-stereo-input-linein" value="{{label}}">'
    + '</div>';
 
     function link (scope, element, attrs, model) {
 
-        scope.leftChannel = '';
-        scope.rightChannel= '';
+        scope.leftLine = '';
+        scope.rightLine= '';
         scope.prefad = [];
 
         // call when internal model value changes
@@ -127,25 +128,25 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
 
             if (!modelvalue) return; // make sure we have some data to work with
 
-            // $log.log ("matrix-source", modelvalue)
+            // $log.log ("matrix-source directive", modelvalue, " left=", modelvalue.leftLine);
 
             // set default options from current assigned values
-            scope.leftChannel = {
-                name : modelvalue.left.name,
-                actif: modelvalue.left.actif, 
-                numid: modelvalue.left.numid,
-                value: modelvalue.left.value[0]
+            scope.leftLine = {
+                name : modelvalue.leftLine.name,
+                actif: modelvalue.leftLine.actif, 
+                numid: modelvalue.leftLine.numid,
+                value: modelvalue.leftLine.value[0]
             };
             
-            scope.rightChannel = {
-                name : modelvalue.right.name,
-                actif: modelvalue.right.actif,
-                numid: modelvalue.right.numid,
-                value: modelvalue.right.value[0]
+            scope.rightLine = {
+                name : modelvalue.rightLine.name,
+                actif: modelvalue.rightLine.actif,
+                numid: modelvalue.rightLine.numid,
+                value: modelvalue.rightLine.value[0]
             };
 
-            scope.label      = modelvalue.label;
-            scope.matrixSourcePool= modelvalue.matrixSourcePool;
+            scope.label           = modelvalue.label;
+            scope.matrixLinesPool= modelvalue.matrixLinesPool;
         });
 
         scope.selected = function (channel, selection) {
@@ -159,9 +160,11 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
         };
 
         scope.init = function() {
-            scope.inputid  = attrs.id    || "analog-in-" + parseInt (Math.random() * 1000);
-            scope.name     = attrs.name  || "NoName";
-            scope.label    = attrs.label || "NoLabel";
+            scope.inputid  = attrs.id     || "analog-in-" + parseInt (Math.random() * 1000);
+            scope.name     = attrs.name   || "NoName";
+            scope.label    = attrs.label  || "NoLabel";
+            scope.route    = attrs.route  || false;
+            scope.source   = attrs.source || false;
         };
 
         scope.init();

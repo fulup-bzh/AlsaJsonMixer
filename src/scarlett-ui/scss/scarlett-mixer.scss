@@ -68,5 +68,11 @@
     width: auto;
     float: right;
   }
+
+  // did not found out why ajg-matrix-volumes is 1.5rem too big !!!
+  #ajg-matrix-volumes {
+    margin-bottom: -1.5rem;
+  }
+
 }
 

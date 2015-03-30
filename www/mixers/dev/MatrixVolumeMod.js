@@ -38,14 +38,14 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
         // call when internal model value changes
         model.$formatters.unshift(function(modelvalue) {
 
-            scope.rightTitle =  modelvalue.right.title;
-            scope.leftTitle  =  modelvalue.left.title;
-
             if (!modelvalue) return; // make sure we have some data to work with
-            // $log.log ("*** matrixvolume modelvalue=", modelvalue)
+            // $log.log ("matrixvolume directive modelvalue=", modelvalue)
 
-            scope.leftSliderModel  = modelvalue.left;
-            scope.rightSliderModel = modelvalue.right;
+            scope.rightTitle =  modelvalue.rightLine.title;
+            scope.leftTitle  =  modelvalue.leftLine.title;
+
+            scope.leftSliderModel  = modelvalue.leftLine;
+            scope.rightSliderModel = modelvalue.rightLine;
 
             scope.rightBalanceModel =  90;
             scope.leftBalanceModel  = -90;
@@ -53,8 +53,8 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             // use left channel as pattern for slider
             scope.sliderBalanceModel= {
                 title   : "Select Channel to adjust L/R channel balance",
-                notMore : modelvalue.left.notMore,
-                notLess : modelvalue.left.notLess,
+                notMore : modelvalue.leftLine.notMore,
+                notLess : modelvalue.leftLine.notLess,
                 disabled: true
             }
         });

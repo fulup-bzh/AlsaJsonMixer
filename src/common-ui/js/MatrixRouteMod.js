@@ -59,17 +59,17 @@ newModule.directive('matrixInput', ["$log", '$timeout', function($log, $timeout)
             scope.selectElem.value = modelvalue.value;
         });
 
-        // we need to wait for matrixSourcePool to be ready before building selection list
-        scope.$watch ('matrixSourcePool', function () {
+        // we need to wait for matrixSourcesPool to be ready before building selection list
+        scope.$watch ('matrixSourcesPool', function () {
             // default value is off
 
             // select is first child in template, remove 1st empty option
             var parent = element[0].firstChild; // get select
-            for (var idx = 0; idx < scope.matrixSourcePool.length; idx++) {
-                var option = addOption(scope.matrixSourcePool[idx], parent);
-                scope.matrixSourcePool[idx].options.push (option);
+            for (var idx = 0; idx < scope.matrixSourcesPool.length; idx++) {
+                var option = addOption(scope.matrixSourcesPool[idx], parent);
+                scope.matrixSourcesPool[idx].options.push (option);
 
-                if (scope.matrixSourcePool[idx].used) {
+                if (scope.matrixSourcesPool[idx].used) {
                     option.disabled = true;
                 } else  if (scope.volume && scope.volume.value === idx) {
                     scope.callback (scope.volume, idx);
@@ -85,7 +85,7 @@ newModule.directive('matrixInput', ["$log", '$timeout', function($log, $timeout)
             // if selection is undefined ignore request
             if (scope.selection === undefined) return;
 
-            if (scope.matrixSourcePool [scope.selection].used) {
+            if (scope.matrixSourcesPool [scope.selection].used) {
                 scope.selection = scope.volume.value;
                 return;
             }
@@ -98,7 +98,7 @@ newModule.directive('matrixInput', ["$log", '$timeout', function($log, $timeout)
         scope: {
             channel    : '=',
             callback   : '=',
-            matrixSourcePool: '='
+            matrixSourcesPool: '='
         },
         restrict: 'E',
         require: 'ngModel',
@@ -111,8 +111,8 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
 
     var template
    = '<div class="small-1 columns ajg-stereo-input">'
-   + '<line-input class="ajg-select-left"  lines-in-pool="matrixSourcePool" ng-model=leftChannel  callback="selected"></line-input>'
-   + '<line-input class="ajg-select-right" lines-in-pool="matrixSourcePool" ng-model=rightChannel callback="selected"></line-input>'
+   + '<line-input class="ajg-select-left"  lines-in-pool="matrixSourcesPool" ng-model=leftChannel  callback="selected"></line-input>'
+   + '<line-input class="ajg-select-right" lines-in-pool="matrixSourcesPool" ng-model=rightChannel callback="selected"></line-input>'
    + '<input type="text" class="ajg-stereo-input-linein" value="{{label}}">'
    + '</div>';
 
@@ -143,7 +143,7 @@ newModule.directive('matrixSource', ["$log", '$timeout', function($log, $timeout
             };
 
             scope.label      = modelvalue.label;
-            scope.matrixSourcePool= modelvalue.matrixSourcePool;
+            scope.matrixSourcesPool= modelvalue.matrixSourcesPool;
         });
 
         scope.selected = function (channel, selection) {

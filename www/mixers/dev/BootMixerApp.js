@@ -44,7 +44,7 @@ ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$co
 
         $routeProvider.
             when('/', {
-                templateUrl: 'partials/mixer-connect.html',
+                templateUrl: 'partials/mixer-connect.html'
             }).
             when('/scarlett', {
                 templateUrl: 'partials/scarlett-mixer.html',

@@ -198,7 +198,7 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 			// if selection is undefined ignore request
 			if (scope.selection === undefined) return;
 
-			if (scope.matrixSourcePool [scope.selection].used) {
+			if (scope.matrixSourcesPool [scope.selection].used) {
 				scope.selection = scope.volume.value;
 				return;
 			}

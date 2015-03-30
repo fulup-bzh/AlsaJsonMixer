@@ -43,18 +43,24 @@ function ScarlettController ($log, $location, $http) {
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
             scope.sndcard  = response.sndcard;
-            var sources=[], mixes=[];
+            var sources=[], mixes=[], routes=[];
 
             for (var idx =0; idx < response.controls.length; idx++) {
                 var control = response.controls[idx];
                 var name = control.name.toLowerCase().split(" ");
 
-                // Input Source 01 Capture Route
+                // Matrix Input source "Input Source 01 Capture Route"
                 if (name[0] === 'input' && name[3] === 'capture') {
                     sources.push (control)
                 }
 
-               // Matrix 01 Mix A Playback Volume
+                // Matrix output route "Matrix 01 Input Playback Route"
+                if (name[0] === 'matrix' && name[3] == "playback") {
+                    routes.push (control)
+                }
+
+
+                // Maxtrix Mix Volume "Matrix 01 Mix A Playback Volume"
                if (name[0] === 'matrix' && name[2] === "mix" && name[5] == "volume") {
 
                     // Matrix object does not exit create it
@@ -68,26 +74,21 @@ function ScarlettController ($log, $location, $http) {
                     }
                     mixes[mixnum].volumes.push (control);
                 }
-
-                // Routine Preset Matrix 01 Input Playback Route
-                if (name[0] === 'matrix' && name[2] === "input" && name[4] == "route") {
-                    console.log ("TBD routing preset =%j", control)
-                    //mixes [mixnum].route = control;
-                }
-
+               
             } // end loop for controls
 
 
             // move mixes from associate array to standard array for easier handling
-            var arraymixes = [];
+            var volumes = [];
             if (mixes) Object.keys(mixes).forEach(function(key, index) {
-                arraymixes.push (mixes[key]);
+                volumes.push (mixes[key]);
             }, mixes);
 
             // push result to scope globally to limit number of watch events
             scope.alsamixer = {
                 sources: sources,
-                mixes  : arraymixes
+                routes : routes,
+                volumes  : volumes
             };
 
         });
