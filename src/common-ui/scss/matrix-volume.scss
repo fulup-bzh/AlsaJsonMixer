@@ -1,0 +1,169 @@
+/*
+   alsa-gateway -- provide a REST/HTTP interface to ALSA-Mixer
+
+   Copyright (C) 2015, Fulup Ar Foll
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   References:
+     http://www.w3schools.com/tags/ref_colorpicker.asp
+
+   $Id: $
+*/
+
+// display inside cursor slider
+.bzm-range-slider {
+  &-display {
+    background-color: rgba(82, 168, 200, .4) !important;
+    width : 1.75rem !important;
+    padding: .25rem;
+    text-align:center;
+  }
+  &-display:hover {
+   @include hover-background;
+  }
+}
+
+
+
+.ajg-matrix-volume {
+  @include widget-decoration;
+
+  // Label is an input zone we need to overwrite Foundation defaults
+  &-input-name {
+   @include label-decoration;
+  }
+
+  &-input-name:hover {
+    @include hover-background;
+  }
+
+
+  &-balance {
+    margin: .2rem 5% .2rem 5%;
+    width: 90%;
+    height: .5rem;
+  }
+
+  &-balance-box {
+    @include box-decoration;
+    margin: 0 0 .5rem 0;
+    padding: 0;
+    background-color: rgba(255, 204, 255, .6);
+  }
+
+  .ajg-knob-button {
+    margin: .2rem 0 .2rem 0;
+  }
+
+
+  .ajg-round-button {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 100%;
+    background-color: rgba(82, 168, 200, 0.6);
+    text-align: center;
+    margin: .2rem 0 .2rem 0;
+    @include shadow-decoration;
+    //transform: rotate(0deg);
+  }
+
+
+  .ajg-knob-button.ajg-left {
+    float: left;
+    margin-left: .4rem ;
+  }
+  .ajg-knob-button.ajg-right {
+    float: right;
+    margin-right: .5rem ;
+  }
+
+  &-buttons-pannel {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #808080;
+  }
+
+  &-button {
+    @include shadow-decoration;
+    line-height: 1.2rem;
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+  }
+
+  &-button:hover {
+    @include hover-background;
+  }
+
+  &-channel {
+   @include box-decoration;
+    padding: 0 .1rem 0 .1rem !important;
+    width: 45%;
+    height: 90%;
+    margin: 0 .1rem .5rem .1rem;
+  }
+
+  &-channel.left {
+    background-color: rgba(153, 255, 204, .6);
+  }
+
+  &-channel.right {
+    background-color: rgba(204, 255, 153, .6);
+  }
+
+  &-level {
+    width: .70rem !important;
+    margin-left: -2px !important;
+  }
+
+  .bzm-range-slider.vertical-range {
+    width: .70rem !important;
+    .range-slider-active-segment {
+      width: .70rem !important;
+    }
+  }
+  .bzm-range-slider {
+    background-color: rgba(154, 205, 50, 0.6) !important;
+    .range-slider-active-segment {
+      background-color: rgba(82, 168, 200, 0.6);
+      border-radius: 5px;
+    }
+  }
+
+  .range-slider {
+    border-radius: 5px;
+  }
+
+  .pfl-button-active {
+    @include active-background;
+  }
+
+  .pre-fader-listen {
+    font-size: .6rem;
+  }
+  .mute-solo-listen {
+    font-size: .8rem;
+  }
+}
+
+.display-time {
+  @include shadow-decoration;
+
+  margin-top: 1rem;
+  line-height: 1.2rem;
+}

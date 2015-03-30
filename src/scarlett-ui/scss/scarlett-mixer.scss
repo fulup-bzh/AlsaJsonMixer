@@ -1,0 +1,72 @@
+/*
+   alsa-gateway -- provide a REST/HTTP interface to ALSA-Mixer
+
+   Copyright (C) 2015, Fulup Ar Foll
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   $Id: $
+*/
+
+// note: colors are defined in common-ui/scss/default.colors.scss
+
+.ajg-scarlett {
+
+  //  option[value="10"] {
+  //    color: #778899;
+  //  }
+
+  .tabs  {
+    dd {
+      margin: 0;
+      height: 2rem;
+      > a {
+        font-size: 1rem;
+        font-style: italic;
+        border-radius: 5px;
+        margin: 0.2rem .2rem .2rem .3rem;
+        padding: 0rem 1.5rem;
+        height: inherit;
+        background: inherit;
+        @include shadow-decoration;
+      }
+      > a:hover {
+        @include hover-background;
+      }
+    }
+    .active {
+      > a {
+        @include active-background;
+      }
+    }
+  }
+
+  // remove padding from zone bellow mixer tabs
+  .tabs-content > .content {;
+      padding: 0 !important;
+  }
+
+  &-title {
+      display: inline-block;
+      font-size: 1rem;
+      font-style: italic;
+  }
+
+  &-status {
+    width: auto;
+    float: right;
+  }
+}
+

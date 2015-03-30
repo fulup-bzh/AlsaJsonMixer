@@ -1,0 +1,22 @@
+<div class="ajg-scarlett-capture">
+
+     <div id="ajg-matrixSourcePool" class="row collapse">
+         <div ng-repeat="mixerSource in mixerSources">
+             <matrix-source callback="matrixSourcePoolCB" ng-model="mixerSource"></matrix-source>
+         </div>
+     </div>
+
+     <tabset>
+         <div class="row collapse">
+             <div  ng-repeat="mixVolume in mixesVolumes">
+                 <tab heading="{{mixVolume.name}}" active="mixVolume.active">
+                     <div class="row collapse">
+                         <div ng-repeat="volume in mixVolume.left.volumes">
+                            <matrix-volume callback="callback" ng-model="volume"></matrix-volume>
+                        </div>
+                     </div>
+                </tab>
+             </div>
+         </div>
+     </tabset>
+</div>
