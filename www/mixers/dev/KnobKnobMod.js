@@ -132,28 +132,47 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 
 	function link(scope, elem, attrs, model) {
 
-		scope.count=0;
-
 		// call when internal model value changes
 		model.$formatters.unshift(function(modelvalue) {
-			scope.value = modelvalue;
 
-			if (scope.count++ > 100) return;
+			console.log ("formatter Knob value=%j", modelvalue);
 
 			// let's ignore any empty value
 			if (modelvalue === undefined) return;
+			if ( modelvalue.notMore) scope.range = modelvalue.notMore - (modelvalue.notLess || 0);
 
-			scope.currentDeg = (scope.value % 360);
+			scope.value = modelvalue.value;
 
-		    scope.knobtop.css('transform','rotate('+(scope.currentDeg)+'deg)');
-			if (scope.callback) scope.callback (scope.currentDeg);
-
+			scope.setValue (scope.value);
 		});
+
+		scope.setValue = function (value) {
+			var degree = ((value/scope.range)*360);
+			scope.rotate (degree);
+			scope.value = value;
+		};
+
+		scope.rotate = function (angle) {
+			scope.currentDeg = (angle % 360);
+			scope.knobtop.css('transform','rotate('+(scope.currentDeg)+'deg)');
+		};
+
+		scope.toggleState = function () {
+
+			if (! scope.active) {
+				scope.active = true;
+				scope.knobtop.addClass('knob-button-active');
+			} else {
+				scope.active = false;
+				scope.knobtop.removeClass('knob-button-active');
+			}
+			return (scope.active);
+		};
 
 		scope.mouseDown =function (event){
 
 			$log.log ("mouse down knob=", event);
-
+			scope.callback (scope);
 
 			return;
 
@@ -190,27 +209,13 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 			if (scopevent.callback) scopevent.callback(currentDeg/359);
 		};
 
-
-		// access new value only if not used
-		scope.selected = function () {
-			scope.selection = scope.selectElem.value;
-
-			// if selection is undefined ignore request
-			if (scope.selection === undefined) return;
-
-			if (scope.matrixSourcesPool [scope.selection].used) {
-				scope.selection = scope.volume.value;
-				return;
-			}
-			scope.callback (scope.volume, scope.selection);
-		};
-
 		scope.init = function () {
 			scope.knobtop = elem.find('i');
 			scope.startDeg = -1;
 			scope.currentDeg = 0;
 			scope.rotation = 0;
 			scope.lastDeg = 0;
+			scope.channel = attrs.channel;
 
 			scope.title = attrs.title;
 		};

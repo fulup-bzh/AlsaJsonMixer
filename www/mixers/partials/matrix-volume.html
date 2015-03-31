@@ -1,11 +1,14 @@
 <div class="small-1 columns ajg-matrix-volume">
     <div  class="ajg-matrix-volume-balance-box">
         <div class="row collapse">
-            <div class="small-6 columns">
-            <knob-knob class="ajg-knob-button knob ajg-left" ng-model="leftBalanceModel"></knob-knob>
+            <div class="small-5 columns">
+            <knob-knob class="ajg-knob-button knob ajg-left" channel=1 callback="knobToggleCB" ng-model="leftBalanceModel"></knob-knob>
             </div>
-            <div class="small-6 columns">
-                <knob-knob class="ajg-knob-button knob ajg-right" ng-model="rightBalanceModel"></knob-knob>
+            <div class="small-1 columns">
+            <span ng-click="knobResetCB()" class="knob-reset fa fa-refresh" ></span>
+            </div>
+            <div class="small-5 columns">
+                <knob-knob class="ajg-knob-button knob ajg-right" channel=2 callback="knobToggleCB" ng-model="rightBalanceModel"></knob-knob>
             </div>
         </div>
         <div class="row collapse">

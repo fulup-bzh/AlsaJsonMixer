@@ -59,7 +59,6 @@ function ScarlettController ($log, $location, $http) {
                     routes.push (control)
                 }
 
-
                 // Maxtrix Mix Volume "Matrix 01 Mix A Playback Volume"
                if (name[0] === 'matrix' && name[2] === "mix" && name[5] == "volume") {
 

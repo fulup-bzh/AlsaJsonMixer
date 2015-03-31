@@ -15,6 +15,17 @@ $knob-size: 1.3rem;
   background-size:  $knob-size $knob-size;
 }
 
+.knob-reset {
+  display: inline-block;
+  font-size: .75em;
+  margin: .3rem 0 0 .15rem;
+  width: 100%;
+  text-align: center;
+}
+.knob-reset:hover {
+  color: red;
+}
+
 .knob .top{
 	position:absolute;
 	top :0;
@@ -30,7 +41,7 @@ $knob-size: 1.3rem;
 .knob :hover {
    @include knob-active;
 }
-.knob .top .active {
+.knob .knob-button-active {
    @include knob-active;
 }
 

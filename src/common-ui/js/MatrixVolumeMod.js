@@ -47,14 +47,23 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             scope.leftSliderModel  = modelvalue.leftLine;
             scope.rightSliderModel = modelvalue.rightLine;
 
-            scope.rightBalanceModel =  90;
-            scope.leftBalanceModel  = -90;
+            scope.rightBalanceModel =   {
+                value :  0,
+                notMore : 128/2,
+                notLess : 128/2
+            };
+            scope.leftBalanceModel  = {
+                value   : 0,
+                notMore : 128/2,
+                notLess : -128/2
+            };
 
             // use left channel as pattern for slider
+            var range = (modelvalue.leftLine.notMore - modelvalue.leftLine.notLess) /2;
             scope.sliderBalanceModel= {
                 title   : "Select Channel to adjust L/R channel balance",
-                notMore : modelvalue.leftLine.notMore,
-                notLess : modelvalue.leftLine.notLess,
+                notMore : range,
+                notLess : (-1*range),
                 disabled: true
             }
         });
@@ -72,7 +81,9 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
         };
 
         scope.BalanceSliderCB = function (value, id) {
-            //scope.callback ('BALANCE-FADER' ,  value);
+            scope.callback ('BALANCE-FADER' ,  value);
+
+            if (scope.activeKnob) scope.activeKnob.setValue(value);
             return (value); // formater value is use within handle
         };
 
@@ -94,6 +105,27 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
 
         };
 
+        scope.knobResetCB = function() {
+            scope.rightBalanceModel =  scope.leftBalanceModel  = {value : 0};
+            scope.rightBalanceModel =  scope.leftBalanceModel  = {value : 0};
+            if (scope.activeKnob)  {
+                scope.activeKnob.toggleState();
+                scope.activeKnob = null;
+                scope.sliderBalanceModel= {disabled: true };
+            }
+        };
+
+        scope.knobToggleCB = function (button) {
+            if (button.toggleState()) {
+                if (scope.activeKnob) scope.activeKnob.toggleState();
+                scope.activeKnob = button;
+                scope.sliderBalanceModel= {disabled: false, value: button.value};
+            }
+            else {
+                scope.sliderBalanceModel= {disabled: true };
+                scope.activeKnob = false;
+            }
+        };
 
         scope.init = function() {
 
