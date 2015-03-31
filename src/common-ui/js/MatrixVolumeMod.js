@@ -50,12 +50,12 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             scope.rightBalanceModel =   {
                 value :  0,
                 notMore : 128/2,
-                notLess : 128/2
+                notLess : -1*128/2
             };
             scope.leftBalanceModel  = {
                 value   : 0,
                 notMore : 128/2,
-                notLess : -128/2
+                notLess : -1*128/2
             };
 
             // use left channel as pattern for slider

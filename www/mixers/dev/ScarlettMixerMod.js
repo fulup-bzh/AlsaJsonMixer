@@ -37,7 +37,7 @@ function ScarlettController ($log, $location, $http) {
     scope.getControls = function (sndcard) {
 
         // send AJAX request to Alsa-Json-Gateway
-        var query= {request:"get-controls", sndcard: sndcard};
+        var query= {request:"get-ctrls", sndcard: sndcard};
         var handler = $http.get('/alsa-json', {params: query});
 
         // process json response from alsa-gateway

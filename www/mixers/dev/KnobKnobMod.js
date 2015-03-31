@@ -135,7 +135,7 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 		// call when internal model value changes
 		model.$formatters.unshift(function(modelvalue) {
 
-			console.log ("formatter Knob value=%j", modelvalue);
+			// console.log ("formatter Knob value=%j", modelvalue);
 
 			// let's ignore any empty value
 			if (modelvalue === undefined) return;
@@ -147,12 +147,14 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 		});
 
 		scope.setValue = function (value) {
+
 			var degree = ((value/scope.range)*360);
 			scope.rotate (degree);
 			scope.value = value;
 		};
 
 		scope.rotate = function (angle) {
+
 			scope.currentDeg = (angle % 360);
 			scope.knobtop.css('transform','rotate('+(scope.currentDeg)+'deg)');
 		};
@@ -169,48 +171,16 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 			return (scope.active);
 		};
 
+		// know was clicked
 		scope.mouseDown =function (event){
-
-			$log.log ("mouse down knob=", event);
 			scope.callback (scope);
-
-			return;
-
-			var event = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event;
-
-			var a = center.y - event.pageY;
-			var b = center.x - event.pageX;
-			var deg = Math.atan2(a,b)*rad2deg;
-
-			// Save the starting position of the drag
-			if(startDeg == -1) startDeg = deg;
-
-			// Calculating the current rotation
-			var tmp = Math.floor((deg-startDeg) + scope.rotation);
-
-			// Making sure the current rotation stays between 0 and 359
-   		    tmp = tmp % 360;
-
-			// Snapping in the off position:
-			if(options.snap && tmp < options.snap){
-				tmp = 0;
-			}
-
-			// This would suggest we are at an end position;
-			// we need to block further rotation.
-			if(Math.abs(tmp - lastDeg) > 180){
-				return false;
-			}
-
-			var currentDeg = tmp;
-			lastDeg = tmp;
-
-			knobTop.css('transform','rotate('+(currentDeg)+'deg)');
-			if (scopevent.callback) scopevent.callback(currentDeg/359);
 		};
 
 		scope.init = function () {
 			scope.knobtop = elem.find('i');
+			scope.notLess = 0;
+			scope.notMore = 100;
+
 			scope.startDeg = -1;
 			scope.currentDeg = 0;
 			scope.rotation = 0;
