@@ -80,7 +80,7 @@ newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$locatio
 
             // send AJAX request to Alsa-Json-Gateway
             var query= {request:"get-ping"};
-            var handler = $http.get('/alsa-json', {params: query});
+            var handler = $http.get('/alsajson', {params: query});
             handler.success(function(response, errcode, headers, config) {
                 if (!self.status)  {
                     Notification.success ({message: "Alsa Server Back to Live", delay: 3000});
