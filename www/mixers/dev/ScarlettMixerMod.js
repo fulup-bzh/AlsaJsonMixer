@@ -38,7 +38,7 @@ function ScarlettController ($log, $location, $http) {
 
         // send AJAX request to Alsa-Json-Gateway
         var query= {request:"get-ctrls", sndcard: sndcard};
-        var handler = $http.get('/alsajson', {params: query});
+        var handler = $http.get('/alsa-json', {params: query});
 
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
