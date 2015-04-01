@@ -39,6 +39,25 @@ function scarletteCapture($log) {
         scope.matrixSourcesPool = []; // inputs lines belongs to a common shared pool.
         scope.matrixRoutesPool  = []; // output lines belongs to a common shared pool.
 
+        // manage capture and route line pools
+        scope.updatePool=function (linesPool, lineIdx, used) {
+            // change line usage status
+            linesPool[lineIdx].used = used;
+
+            // update select source options to disable used lines
+            for (var idx=0; idx < linesPool[lineIdx].options.length; idx++) {
+                linesPool[lineIdx].options[idx].disabled=used;
+            }
+        };
+        scope.takeLinePool= function (linesPool, lineIdx) {
+            if (lineIdx == 0 || linesPool[lineIdx].used) return;
+            scope.updatePool (linesPool, lineIdx, true);
+        };
+        scope.freeLinePool= function (linesPool, lineIdx) {
+            if (lineIdx == 0) return;
+            scope.updatePool (linesPool, lineIdx, false);
+        };
+
         // parse input/output Source/Route params
         scope.ProcessRouteSource = function (line) {
 
@@ -52,59 +71,43 @@ function scarletteCapture($log) {
             return params;
         };
 
+        scope.ProcessFader = function (channel) {
+            var fader = {
+                numid  : channel.numid,
+                actif  : channel.actif,
+                value  : channel.value[0],
+                notLess: channel.ctrl.min,
+                notMore: channel.ctrl.max,
+                byStep : channel.ctrl.step,
+                //tlv  : channel.tlv
+                //acl  : channel.acl
+            };
+            return fader;
+        };
 
         // parse Matrix Playback and Route to create a mono volume matrix mix
-        scope.ProcessVolume = function (matrixVol) {
+        scope.ProcessStereoMix = function (leftMix, rightMix) {
 
-            var mixName =  "Vol-" + matrixVol.name;
+            var volumeMix = [];
 
-            // if no volumes defined we are facing a switch
-            if (matrixVol.volumes.length == 0) {
-                var volumeVol = {
-                    name : mixName,
-                    numid: matrixVol.route.numid,
-                    title: matrixVol.route.name
-                }
-            } else {
-                var volumeVol = {
-                    name    : mixName,
-                    volumes : []
+            // processing playback volumes both channel should have the same length
+            for (var idx = 0; idx < leftMix.volumes.length; idx = idx + 2) {
+
+                var stereoMix = {
+                    leftMix: {
+                        title  : leftMix.volumes [idx].name, // use left mix name
+                        leftFader:  scope.ProcessFader (leftMix.volumes [idx]),
+                        rightFader: scope.ProcessFader (leftMix.volumes [idx])
+                    },
+                    rightMix: {
+                        title  : leftMix.volumes [idx+1].name, // use left mix name
+                        leftFader:  scope.ProcessFader (rightMix.volumes [idx]),
+                        rightFader: scope.ProcessFader (rightMix.volumes [idx])
+                    }
                 };
-
-                // processing playback volumes
-                for (var idx = 0; idx < matrixVol.volumes.length; idx = idx + 2) {
-
-                    var left  = matrixVol.volumes [idx];
-                    var right = matrixVol.volumes [idx + 1];
-
-                    var fader = {
-                        leftLine: {
-                            id     : left.numid,
-                            actif  : left.actif,
-                            value  : left.value[0],
-                            notLess: left.ctrl.min,
-                            notMore: left.ctrl.max,
-                            byStep : left.ctrl.step,
-                            title  : left.name
-                            //tlv  : left.tlv
-                            //acl  : left.acl
-                        },
-                        rightLine: {
-                            id     : right.numid,
-                            actif  : right.actif,
-                            value  : right.value[0],
-                            notLess: right.ctrl.min,
-                            notMore: right.ctrl.max,
-                            byStep : right.ctrl.step,
-                            title  : right.name
-                            //tlv  : left.tlv
-                            //acl  : left.acl
-                        }
-                    };
-                    volumeVol.volumes.push(fader);
-                }
+                volumeMix.push(stereoMix);
             }
-            return volumeVol;
+            return volumeMix;
         };
         
         // call when internal model value changes
@@ -115,9 +118,9 @@ function scarletteCapture($log) {
             // prepare array to pass date to widget
             var matrixSources = [];
             var matrixRoutes = [];
-            var matrixVolumes = [];
+            var matrixMixVols = [];
 
-            // use 1st input line to collect enums [common/shared pool for all capture/sources]
+            // use 1st Capture lines to collect enums [common/shared pool for all capture/sources]
             var sourceref = modelvalue.sources[1].ctrl.enums;
             for (var idx=0; idx < sourceref.length; idx ++) {
                 scope.matrixSourcesPool.push({id: idx, name: sourceref [idx], used: false, options: []});
@@ -143,7 +146,7 @@ function scarletteCapture($log) {
                 matrixSources.push(stereolines);
             }
             
-            // use 1st output line to collect enums [global common/shared pool for all output/route]
+            // use 1st Route lines to collect enums [global common/shared pool for all output/route]
             var routeref = modelvalue.routes[1].ctrl.enums;
             for (var idx=0; idx < routeref.length; idx ++) {
                 scope.matrixRoutesPool.push ({id: idx , name:  routeref [idx], used: false, options: []});
@@ -170,54 +173,30 @@ function scarletteCapture($log) {
                 matrixRoutes.push(stereolines);
             }
 
-            // groupe Matrix mix as stereo output channel
-            for (var volIdx = 0; volIdx < modelvalue.volumes.length; volIdx = volIdx +2) {
-                var leftVol   = modelvalue.volumes [volIdx];
-                var rightVol  = modelvalue.volumes [volIdx+1];
+            // groupe Matrix mix in stereo output channel
+            for (var mixIdx = 0; mixIdx < modelvalue.volumes.length; mixIdx = mixIdx +2) {
+                var leftVol   = modelvalue.volumes [mixIdx];
+                var rightVol  = modelvalue.volumes [mixIdx+1];
 
                 var stereoVol = {
-                    name  : "Vol-" + leftVol.name + " / " + rightVol.name,
-                    leftLine  : [],
-                    rightLine : []
+                    name      : "Mix-" + leftVol.name + " / " + rightVol.name,
+                    stereomix : scope.ProcessStereoMix (leftVol, rightVol)
                 };
-                // build a stereo volume mix
-
-                // $log.log ("leftVol=", leftVol, "rightVol=", rightVol)
-                stereoVol.leftLine = scope.ProcessVolume (leftVol);
-                stereoVol.rightLine= scope.ProcessVolume (rightVol);
-                matrixVolumes.push (stereoVol);
-            }
+                // $log.log ("stereoVol=", stereoVol);
+                matrixMixVols.push (stereoVol);
+            };
 
             // update scope in one big chunk to avoid flickering
             scope.matrixSources = matrixSources;
             scope.matrixRoutes  = matrixRoutes;
-            scope.matrixVolumes = matrixVolumes;
+            scope.matrixMixVols = matrixMixVols;
 
             // $log.log ("matrixSources=" , matrixSources);
             // $log.log ("matrixRoutes="  , matrixRoutes);
-            // $log.log ("matrixVolumes=" , matrixVolumes);
+            $log.log ("matrixMixVolsMix=" , matrixMixVols);
             //}
         }); // end formatter
 
-        scope.updatePool=function (linesPool, lineIdx, used) {
-            // change line usage status
-            linesPool[lineIdx].used = used;
-
-            // update select source options to disable used lines
-            for (var idx=0; idx < linesPool[lineIdx].options.length; idx++) {
-                linesPool[lineIdx].options[idx].disabled=used;
-            }
-        };
-
-        scope.takeLinePool= function (linesPool, lineIdx) {
-            if (lineIdx == 0 || linesPool[lineIdx].used) return;
-            scope.updatePool (linesPool, lineIdx, true);
-        };
-
-        scope.freeLinePool= function (linesPool, lineIdx) {
-            if (lineIdx == 0) return;
-            scope.updatePool (linesPool, lineIdx, false);
-        };
 
         // export call back
         scope.matrixSourcesPoolCB = {
@@ -231,6 +210,12 @@ function scarletteCapture($log) {
            free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
         };
 
+        // call each time a volume slider moves
+        scope.matrixMixFaderCB = function (modelvalue, realvalue) {
+
+            $log.log ("matrixMixVolscallback model=", modelvalue, "value=", realvalue);
+
+        }
     };
 
     return {

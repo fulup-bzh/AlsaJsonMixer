@@ -8,11 +8,11 @@
 
     <div id="ajg-matrix-volumes" class="row collapse">
       <tabset >
-             <div  ng-repeat="mixVolume in matrixVolumes">
+             <div  ng-repeat="mixVolume in matrixMixVols">
                  <tab heading="{{mixVolume.name}}" active="mixVolume.active">
                      <div class="row collapse">
-                         <div ng-repeat="volume in mixVolume.leftLine.volumes">
-                            <matrix-volume callback="callback" ng-model="volume"></matrix-volume>
+                         <div ng-repeat="volume in mixVolume.stereomix">
+                            <matrix-volume callback="matrixMixFaderCB" ng-model="volume"></matrix-volume>
                         </div>
                      </div>
                 </tab>

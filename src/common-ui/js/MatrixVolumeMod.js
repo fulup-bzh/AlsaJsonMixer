@@ -39,27 +39,38 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
         model.$formatters.unshift(function(modelvalue) {
 
             if (!modelvalue) return; // make sure we have some data to work with
-            // $log.log ("matrixvolume directive modelvalue=", modelvalue)
+            $log.log ("matrixvolume directive modelvalue=", modelvalue)
 
-            scope.rightTitle =  modelvalue.rightLine.title;
-            scope.leftTitle  =  modelvalue.leftLine.title;
+            // we use left mix as reference and compute right mix from balance level
+            var refMix =  modelvalue.leftMix;
+            var range  = (refMix.leftFader.notMore - refMix.leftFader.notLess) /2;
 
-            scope.leftSliderModel  = modelvalue.leftLine;
-            scope.rightSliderModel = modelvalue.rightLine;
+            scope.leftSliderTitle  =  refMix.leftFader.title;
+            scope.rightSliderTitle =  refMix.rightFader.title;
 
-            scope.rightBalanceModel =   {
+            // attache right mix NUMID to reference channel to compute balance equalization
+            refMix.leftFader.rightMix = {
+                numid: modelvalue.rightMix.leftFader.numid,
+                value: modelvalue.rightMix.leftFader.value
+            };
+            refMix.rightFader.rightMix = {
+                numid: modelvalue.rightMix.rightFader.numid,
+                value: modelvalue.rightMix.rightFader.value
+            };
+
+            // some info to compute both channel with the same callback
+            refMix.leftFader.left=true;
+            refMix.rightFader.right=true;
+
+            scope.leftSliderModel  = refMix.leftFader;
+            scope.rightSliderModel = refMix.rightFader;
+
+            scope.rightBalanceModel =  scope.leftBalanceModel = {
                 value :  0,
-                notMore : 128/2,
-                notLess : -1*128/2
-            };
-            scope.leftBalanceModel  = {
-                value   : 0,
-                notMore : 128/2,
-                notLess : -1*128/2
+                notMore : range/2,
+                notLess : -1*range/2
             };
 
-            // use left channel as pattern for slider
-            var range = (modelvalue.leftLine.notMore - modelvalue.leftLine.notLess) /2;
             scope.sliderBalanceModel= {
                 title   : "Select Channel to adjust L/R channel balance",
                 notMore : range,
@@ -68,16 +79,22 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             }
         });
 
-        scope.LeftSliderCB  = function (value, id) {
-            //scope.callback ('LEFT-FADER' ,  value);
-            if (scope.prefad.PFLM) scope.rightSliderModel  = {value: value};
-            return (value); // formater value is use within handle
-        };
+        // formatter CB are call when a slide move, then should return value presented in handle
+        scope.FaderSliderCB  = function (value, id, modelvalue) {
 
-        scope.RightSliderCB = function (value, id) {
-            //scope.callback ('RIGHT-FADER' ,  value);
-            if (scope.prefad.PFLM) scope.leftSliderModel = {value: value};
-            return (value); // formater value is use within handle
+            // on mono mode both slider are synchronized
+            if (model.right && scope.prefad.PFLM) scope.rightSliderModel  = {value: value}; // if mono let's sync channel
+            if (model.left  && scope.prefad.PFLM) scope.leftSliderModel  = {value: value};  // if mono let's sync channel
+
+            $log.log ("LeftSliderCB handle", modelvalue, 'balance value', scope.rightBalanceModel);
+
+            // compute balance equalisation
+            if (model.left)  value = value + scope.leftSliderModel.value;
+            if (model.right) value = value + scope.rightSliderModel.value;
+
+            // notify board capture about value change
+            scope.callback (modelvalue, value);
+            return (value); // formatter value is display within handle
         };
 
         scope.BalanceSliderCB = function (value, id) {

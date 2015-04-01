@@ -141,16 +141,15 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 			if (modelvalue === undefined) return;
 			if ( modelvalue.notMore) scope.range = modelvalue.notMore - (modelvalue.notLess || 0);
 
-			scope.value = modelvalue.value;
-
-			scope.setValue (scope.value);
+			scope.modelvalue = modelvalue;
+			scope.setValue (scope.modelvalue.value);
 		});
 
 		scope.setValue = function (value) {
 
 			var degree = ((value/scope.range)*360);
 			scope.rotate (degree);
-			scope.value = value;
+			scope.modelvalue.value = value;
 		};
 
 		scope.rotate = function (angle) {

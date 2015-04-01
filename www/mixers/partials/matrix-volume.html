@@ -17,14 +17,14 @@
         </div>
     </div>
     <div class="row collapse">
-        <div class="small-6 columns ajg-matrix-volume-channel left" title="{{leftTitle}}">
-            <range-slider vertical="true" class="radius" formatter='LeftSliderCB' display-target="handle"
+        <div class="small-6 columns ajg-matrix-volume-channel left" title="{{leftSliderTitle}}">
+            <range-slider vertical="true" class="radius" formatter='FaderSliderCB' display-target="handle"
                           ng-model="leftSliderModel"> </range-slider>
             <div class="range-slider vertical-range ajg-matrix-volume-level"></div>
         </div>
 
-        <div class="small-6 columns ajg-matrix-volume-channel right"  title="{{rightTitle}}">
-            <range-slider vertical="true" class="radius" formatter='RightSliderCB' display-target="handle"
+        <div class="small-6 columns ajg-matrix-volume-channel right"  title="{{rightSliderTitle}}">
+            <range-slider vertical="true" class="radius" formatter='FaderSliderCB' display-target="handle"
                           ng-model="rightSliderModel" > </range-slider>
             <div class="range-slider vertical-range ajg-matrix-volume-level"></div>
         </div>
