@@ -56,7 +56,7 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
 
             // send AJAX request to Alsa-Json-Gateway
             var query= {request:"get-cards"};
-            var handler = $http.get('/alsajson', {params: query});
+            var handler = $http.get('/alsa-json', {params: query});
 
             handler.success(function(response, errcode, headers, config) {
                 scope.online = 1;
