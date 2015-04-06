@@ -75,10 +75,10 @@ function scarletteCapture($log) {
             var fader = {
                 numid  : channel.numid,
                 actif  : channel.actif,
-                value  : channel.value[0],
+                value  : channel.value,
                 notLess: channel.ctrl.min,
                 notMore: channel.ctrl.max,
-                byStep : channel.ctrl.step,
+                byStep : channel.ctrl.step
                 //tlv  : channel.tlv
                 //acl  : channel.acl
             };
@@ -199,21 +199,21 @@ function scarletteCapture($log) {
 
 
         // export call back
-        scope.matrixSourcesPoolCB = {
+        scope.MatrixSourcesPoolCB = {
            take: function (lineIdx) {scope.takeLinePool (scope.matrixSourcesPool, lineIdx)} ,
            free: function (lineIdx) {scope.freeLinePool (scope.matrixSourcesPool, lineIdx)}
         };
 
         // export call back
-        scope.matrixRoutesPoolCB = {
+        scope.MatrixRoutesPoolCB = {
            take: function (lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, lineIdx)} ,
            free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
         };
 
         // call each time a volume slider moves
-        scope.matrixMixFaderCB = function (modelvalue, realvalue) {
+        scope.ActivateCtrlsCB = function (alsaCtrls) {
 
-            $log.log ("matrixMixVolscallback model=", modelvalue, "value=", realvalue);
+            $log.log ("matrixMixVolscallback alsaCtrls=", alsaCtrls);
 
         }
     };

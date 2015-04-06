@@ -36,7 +36,7 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
         + '<div><i class="ajg-connect-title">{{title}}<i>'
         + '<ajg-monitor-status class="ajg-connect-status" icon={{icon}}"></ajg-monitor-status></div>'
         + '<div  ng-repeat="sndcard in sndcards">'
-        + '<div  title="{{sndcard.info}}"  ng-click="selectCard(sndcard.index)">'
+        + '<div  title="{{sndcard.info}}"  ng-click="selectCard($index)">'
         + '<div class="row ajg-connect-sndcard">'
         + '<div class="small-10 columns">'
         + '<span class="ajg-connect-name"> {{sndcard.name}} </span>'
@@ -55,12 +55,19 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
         scope.getCards = function () {
 
             // send AJAX request to Alsa-Json-Gateway
-            var query= {request:"get-cards"};
-            var handler = $http.get('/alsa-json', {params: query});
+            var query= {request:"card-get-all"};
+            var handler = $http.get('/jsonapi', {params: query});
 
             handler.success(function(response, errcode, headers, config) {
+
+                // check if response is valid
+                if (response.ajgtype != "AJG_sndlist") {
+                    alert ("AJM:FATAL ajg-mixer-connect response=" +  response);
+                    return;
+                }
+
                 scope.online = 1;
-                scope.sndcards = response;
+                scope.sndcards = response.data;
             });
 
             handler.error(function(status, errcode, headers) {
@@ -71,10 +78,15 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
        // callback when user chose a sndcard
        scope.selectCard = function (index) {
 
+           if (index == undefined) {
+               alert ("AJM:Fatal invalid sndcard index [please report bug]");
+               return;
+           }
+
            // build a mixer URI from sndcard short name. Use generic when no driver is avaliable
            var mixerpath = '/' + scope.sndcards [index].name.toLowerCase().replace(/ /g,'-');
            if (!mixerpath in $route.routes)  mixerpath = "/generic";
-           $location.path (mixerpath).search('card',scope.sndcards [index].index);
+           $location.path (mixerpath).search('card', scope.sndcards [index].cardid);
        };
 
        scope.init = function () {

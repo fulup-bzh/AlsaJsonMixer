@@ -2,7 +2,7 @@
 
      <div id="ajg-matrix-source-Pool" class="row collapse">
          <div ng-repeat="matrixSource in matrixSources">
-             <matrix-source source=true callback="matrixSourcesPoolCB" ng-model="matrixSource"></matrix-source>
+             <matrix-source source=true callback="MatrixSourcesPoolCB" ng-model="matrixSource"></matrix-source>
          </div>
      </div>
 
@@ -12,7 +12,7 @@
                  <tab heading="{{mixVolume.name}}" active="mixVolume.active">
                      <div class="row collapse">
                          <div ng-repeat="volume in mixVolume.stereomix">
-                            <matrix-volume callback="matrixMixFaderCB" ng-model="volume"></matrix-volume>
+                            <matrix-volume callback="ActivateCtrlsCB" ng-model="volume"></matrix-volume>
                         </div>
                      </div>
                 </tab>
@@ -21,7 +21,7 @@
     </div>
      <div id="ajg-matrix-route-pool" class="row collapse">
         <div ng-repeat="matrixRoute in matrixRoutes">
-            <matrix-source route=true callback="matrixRoutesPoolCB" label="off" ng-model="matrixRoute"></matrix-source>
+            <matrix-source route=true callback="MatrixRoutesPoolCB" label="off" ng-model="matrixRoute"></matrix-source>
         </div>
     </div>
 </div>

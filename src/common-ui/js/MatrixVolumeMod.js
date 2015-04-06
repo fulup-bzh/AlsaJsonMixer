@@ -39,7 +39,7 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
         model.$formatters.unshift(function(modelvalue) {
 
             if (!modelvalue) return; // make sure we have some data to work with
-            $log.log ("matrixvolume directive modelvalue=", modelvalue)
+            // $log.log ("matrixvolume directive modelvalue=", modelvalue)
 
             // we use left mix as reference and compute right mix from balance level
             var refMix =  modelvalue.leftMix;
@@ -48,59 +48,118 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             scope.leftSliderTitle  =  refMix.leftFader.title;
             scope.rightSliderTitle =  refMix.rightFader.title;
 
-            // attache right mix NUMID to reference channel to compute balance equalization
-            refMix.leftFader.rightMix = {
-                numid: modelvalue.rightMix.leftFader.numid,
-                value: modelvalue.rightMix.leftFader.value
-            };
-            refMix.rightFader.rightMix = {
-                numid: modelvalue.rightMix.rightFader.numid,
-                value: modelvalue.rightMix.rightFader.value
-            };
+            // some info to compute both channels with the same callback
+            refMix.leftFader.channelNum =1;
+            refMix.rightFader.channelNum=2;
 
-            // some info to compute both channel with the same callback
-            refMix.leftFader.left=true;
-            refMix.rightFader.right=true;
-
+            // attach model to active sliders
             scope.leftSliderModel  = refMix.leftFader;
             scope.rightSliderModel = refMix.rightFader;
 
-            scope.rightBalanceModel =  scope.leftBalanceModel = {
-                value :  0,
-                notMore : range/2,
-                notLess : -1*range/2
+            // Balances definition for both knob and attached shared slider
+            scope.leftBalanceModel = scope.rightBalanceModel = scope.sliderBalanceModel= {
+                value     : 0,
+                notMore   : range/2,
+                notLess   : -1*range/2
+            };
+            scope.sliderBalanceModeldisabled  = true; // do not display handle on slider
+
+            // keep track of ALSA controls numids Two Channels IN and Two channels out
+            scope.ctrlsNumid = {
+                left : {
+                    mixLeft: modelvalue.leftMix.leftFader.numid,
+                    mixRight: modelvalue.rightMix.leftFader.numid
+                },
+                right : {
+                    mixLeft: modelvalue.leftMix.rightFader.numid,
+                    mixRight: modelvalue.rightMix.rightFader.numid
+                }
             };
 
-            scope.sliderBalanceModel= {
-                title   : "Select Channel to adjust L/R channel balance",
-                notMore : range,
-                notLess : (-1*range),
-                disabled: true
-            }
+            // by default balance & volume value is null
+            scope.balanceValue = {
+                left      : 0,
+                right     : 0
+            };
+
+            scope.volumeValue = {
+                left      : 0,
+                right     : 0
+            };
+
+            console.log ("ctrlsNumid %j",scope.ctrlsNumid )
         });
 
-        // formatter CB are call when a slide move, then should return value presented in handle
-        scope.FaderSliderCB  = function (value, id, modelvalue) {
+        scope.activateCtrls = function (channelNum) {
+            var value, numids;
 
-            // on mono mode both slider are synchronized
-            if (model.right && scope.prefad.PFLM) scope.rightSliderModel  = {value: value}; // if mono let's sync channel
-            if (model.left  && scope.prefad.PFLM) scope.leftSliderModel  = {value: value};  // if mono let's sync channel
+            if (channelNum == 1) {
+                value  = scope.volumeValue.left;
+                numids = scope.ctrlsNumid.left;
+            }
+            if (channelNum == 2) {
+                value  = scope.volumeValue.right;
+                numids = scope.ctrlsNumid.right;
+            }
 
-            $log.log ("LeftSliderCB handle", modelvalue, 'balance value', scope.rightBalanceModel);
+            // compute balance equalisation and create alsa controls
+            var leftMix  = {
+                numid:  numids.mixLeft,
+                values: [(scope.balanceValue.left <= 0) ? value  : value - scope.balanceValue.left]
+            };
 
-            // compute balance equalisation
-            if (model.left)  value = value + scope.leftSliderModel.value;
-            if (model.right) value = value + scope.rightSliderModel.value;
+            var rightMix = {
+                numid : numids.mixRight,
+                values: [(scope.balanceValue.right >= 0) ? value : value + scope.balanceValue.right]
+            };
 
-            // notify board capture about value change
-            scope.callback (modelvalue, value);
-            return (value); // formatter value is display within handle
+            // notify board capture about values
+            scope.callback ([leftMix, rightMix]);
+
         };
 
-        scope.BalanceSliderCB = function (value, id) {
-            scope.callback ('BALANCE-FADER' ,  value);
+        // formatter CB are call when a slide move, then should return value presented in handle
+        scope.FaderSliderCB  = function (value, id, model) {
 
-            if (scope.activeKnob) scope.activeKnob.setValue(value);
+            //ingnore empty callback
+            if (model == undefined) return;
+
+            // in mono mode both slider are synchronized
+            if (model.channelNum == 1) {
+                if (scope.prefad.PFLM) scope.leftSliderModel = {value: value};
+                scope.volumeValue.left = value;
+            }
+
+            if (model.channelNum == 2) {
+                if (scope.prefad.PFLM) scope.rightSliderModel = {value: value};
+                scope.volumeValue.right = value;
+            }
+
+            // send control to Alsa
+            scope.activateCtrls (model.channelNum);
+
+            // return value displays within handle
+            return (value);
+        };
+
+        scope.BalanceSliderCB = function (value, id, model) {
+
+            //ingnore empty callback
+            if (model == undefined) return;
+
+            $log.log ("BalanceSliderCB=", model)
+
+            if (scope.activeKnob) {
+
+                // rotate knob to reflect balance
+                scope.activeKnob.setValue(value);
+
+                // store balance in model depending on active knob
+                if (scope.activeKnob.channelNum === 1) scope.balanceValue.left  = value;
+                if (scope.activeKnob.channelNum === 2) scope.balanceValue.right = value;
+                scope.activateCtrls (scope.activeKnob.channelNum);
+            }
+
             return (value); // formater value is use within handle
         };
 

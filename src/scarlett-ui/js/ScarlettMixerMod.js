@@ -17,7 +17,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
- Object: this module processes return from http://localhost:1234/alsa-json?request=get-controls&sndcard=xx.
+ Object: this module processes return from http://localhost:1234/jsonapi?request=get-controls&sndcard=xx.
  As alsa-json is basically a flat port of amixer.c, it does not understand complex music oriented sound boards.
  This module parse returned information from AlsaJsonGateway and organise it a model that is compliant with
  Scarlett board logic.
@@ -37,16 +37,24 @@ function ScarlettController ($log, $location, $http) {
     scope.getControls = function (sndcard) {
 
         // send AJAX request to Alsa-Json-Gateway
-        var query= {request:"get-ctrls", sndcard: sndcard};
-        var handler = $http.get('/alsa-json', {params: query});
+        var query= {request:"ctrl-get-all", cardid: sndcard};
+        var handler = $http.get('/jsonapi', {params: query});
 
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
             scope.sndcard  = response.sndcard;
             var sources=[], mixes=[], routes=[];
 
-            for (var idx =0; idx < response.controls.length; idx++) {
-                var control = response.controls[idx];
+            // verify response is a valid "AJG_ctrls",
+            if (response.ajgtype !=  "AJG_ctrls") {
+                alert ("AJM:FATAL ScarlettMixerController sndcard=" +sndcard +", response=" + JSON.stringify (response));
+                return;
+            }
+            // extract controls from response
+            var controls = response.data;
+
+            for (var idx =0; idx < controls.length; idx++) {
+                var control = controls[idx];
                 var name = control.name.toLowerCase().split(" ");
 
                 // Matrix Input source "Input Source 01 Capture Route"
@@ -98,9 +106,9 @@ function ScarlettController ($log, $location, $http) {
     };
 
     // this method is called each time user manipulates UI
-    scope.callback = function (action, value) {
+    scope.SendAlsaCtrlsCB = function (alsaCtrls) {
 
-      $log.log ("Scarlett callback action=", action, ' value=', value);
+      $log.log ("Scarlett Mixer CB alsaCtrls=", alsaCtrls);
 
     };
 

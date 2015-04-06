@@ -180,11 +180,11 @@ newModule.directive('knobKnob', ["$log", '$timeout', function($log, $timeout) {
 			scope.notLess = 0;
 			scope.notMore = 100;
 
-			scope.startDeg = -1;
+			scope.startDeg   = -1;
 			scope.currentDeg = 0;
-			scope.rotation = 0;
-			scope.lastDeg = 0;
-			scope.channel = attrs.channel;
+			scope.rotation   = 0;
+			scope.lastDeg    = 0;
+			scope.channelNum = parseInt (attrs.channelNum);
 
 			scope.title = attrs.title;
 		};

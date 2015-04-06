@@ -5,6 +5,6 @@
 		<ajg-monitor-status class="ajg-scarlett-status"> </ajg-monitor-status>
 	</div>
 	<div class="row collapse">
-		<scarlett-capture ng-model="Scarlett.alsamixer" callback="Scarlett.callback"></scarlett-capture>
+		<scarlett-capture ng-model="Scarlett.alsamixer" callback="Scarlett.SendAlsaCtrlsCB"></scarlett-capture>
 	</div>
 </div>
