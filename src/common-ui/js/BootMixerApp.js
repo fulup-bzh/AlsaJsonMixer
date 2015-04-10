@@ -27,8 +27,8 @@
 'use strict';
 
 var ngapp = angular.module('mixer-ui-app', [
-        'ngRoute', 'ui-notification', 'bzm-range-slider', 'mm.foundation', 'bzm-knob-knob'
-        ,'ajg-mixer-connect', 'ajg-monitor-gateway', 'ajg-matrix-source','ajg-matrix-volume'
+        'ngRoute', 'ui-notification', 'bzm-range-slider', 'mm.foundation', 'ajm-knob-knob', 'ajm-playback-switch'
+        ,'ajm-mixer-connect', 'ajm-monitor-gateway', 'ajm-matrix-route','ajm-matrix-fader', 'ajm-master-volume'
     ]
 );
 
@@ -53,6 +53,7 @@ ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$co
                     deps:function($q, $rootScope) {
                         var deferred = $q.defer();
                         var dependencies = [   // list JS to load this this route
+                            '/mixers/dev/ScarlettMasterMod.js',
                             '/mixers/dev/ScarlettMixerMod.js',
                             '/mixers/dev/ScarlettCaptureMod.js'
                         ];

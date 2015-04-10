@@ -26,7 +26,7 @@
 'use strict';
 
 // this module is load statically before any route is cativated
-var newModule = angular.module('ajg-monitor-gateway', []);
+var newModule = angular.module('ajm-monitor-gateway', []);
 
 // http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
 newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$location','Notification'
@@ -34,9 +34,9 @@ newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$locatio
 
 
     var template =
-          '<div class="ajg-monitor">'
-        + '<span class="ajg-monitor-gateway ">alsa://{{hostname}}:{{httpdport}}</span>'
-        + '<i class="ajg-monitor-status fa fa-cog"></i>'
+          '<div class="ajm-monitor">'
+        + '<span class="ajm-monitor-gateway" ng-click="clicked($event)" >alsa://{{hostname}}:{{httpdport}}</span>'
+        + '<i class="ajm-monitor-status fa fa-cog"></i>'
         + '</div>'
         ;
 
@@ -53,25 +53,25 @@ newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$locatio
         this.register = function (elem) {
             this.elems.push(elem);
             if (this.status) {
-                elem.addClass    ("ajg-online");
-                elem.removeClass ("ajg-offline");
+                elem.addClass    ("ajm-online");
+                elem.removeClass ("ajm-offline");
             } else {
-                elem.addClass    ("ajg-offline");
-                elem.removeClass ("ajg-online");
+                elem.addClass    ("ajm-offline");
+                elem.removeClass ("ajm-online");
             }
         };
 
         this.online = function () {
             for (var idx=0; idx < this.elems.length; idx ++) {
-                this.elems[idx].addClass    ("ajg-online");
-                this.elems[idx].removeClass ("ajg-offline");
+                this.elems[idx].addClass    ("ajm-online");
+                this.elems[idx].removeClass ("ajm-offline");
             }
         };
 
         this.offline = function(){
             for (var idx=0; idx < this.elems.length; idx ++) {
-                this.elems[idx].addClass    ("ajg-offline");
-                this.elems[idx].removeClass ("ajg-online");
+                this.elems[idx].addClass    ("ajm-offline");
+                this.elems[idx].removeClass ("ajm-online");
             }
         };
 
@@ -124,6 +124,7 @@ newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$locatio
     return {
         template: template,
         scope: {
+            callback : "="
         },
         restrict: 'E',
         link: link

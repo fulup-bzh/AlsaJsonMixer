@@ -4,7 +4,7 @@
 <head>
 	<meta name="Author" content="Fulup Ar Foll">
 	<meta name="Object" content="Entry Page for ALSA-JSON-GATEWAY client UI">
-	<Title>AJG-Alsa-Mixer</Title>
+	<Title>ajm-Alsa-Mixer</Title>
 
     <script>
 		/*Protect us from IE unwanted no-console feature */
@@ -43,9 +43,11 @@
 	<script src="dev/BootMixerApp.js"></script>
 	<script src="dev/MixerConnectMod.js"></script>
 	<script src="dev/MonitorGatewayMod.js"></script>
-	<script src="dev/MatrixSourceMod.js"></script>
-	<script src="dev/MatrixVolumeMod.js"></script>
-	<script src="dev/KnobKnobMod.js"></script>
+	<script src="dev/MatrixRouteMod.js"></script>
+	<script src="dev/MatrixFaderMod.js"></script>
+	<script src="dev/MasterVolumeMod.js" /></script>
+  	<script src="dev/KnobKnobMod.js" /></script>
+   	<script src="dev/PlaybackSwitchMod.js" /></script>
 
 	<!-- HTML5 Angular Application Base URL-->
 	<base href="/mixers/index.html">
@@ -53,7 +55,7 @@
 </head>
 <body  ng-app="mixer-ui-app">
 <h3>Alsa Json Gateway Client</h3>
-<div class="row collapse ajg-global-panel">
+<div class="row collapse ajm-global-panel">
      <div ng-view></div>
 </div>
 

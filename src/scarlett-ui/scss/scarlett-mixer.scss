@@ -22,7 +22,7 @@
 
 // note: colors are defined in common-ui/scss/default.colors.scss
 
-.ajg-scarlett {
+.ajm-scarlett {
 
   //  option[value="10"] {
   //    color: #778899;
@@ -46,9 +46,9 @@
         @include hover-background;
       }
     }
-    .active {
+    .actif {
       > a {
-        @include active-background;
+        @include actif-background;
       }
     }
   }
@@ -69,8 +69,8 @@
     float: right;
   }
 
-  // did not found out why ajg-matrix-volumes is 1.5rem too big !!!
-  #ajg-matrix-volumes {
+  // did not found out why ajm-matrix-volumes is 1.5rem too big !!!
+  #ajm-matrix-volumes {
     margin-bottom: -1.5rem;
   }
 

@@ -17,18 +17,18 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
- References:
+ This module takes as input parse responses from ScarlettMixerMod.
+ It refines parsing depending on UI config [number of group by tabs, stereo/mono, ...]
+ This module is also in charge on receiving callback from UI as well as maintaining
+ capture/volumes lines usage count.
 
-
- $Id: $
  */
 
 
 'use strict';
 
 
-// var newModule = angular.module('ajg-monitor-gateway', []);
-
+// Lazy Directive Load
 ngapp.addDirective ('scarlettCapture', ["$log",  scarletteCapture]);
 
 function scarletteCapture($log) {
@@ -49,71 +49,58 @@ function scarletteCapture($log) {
                 linesPool[lineIdx].options[idx].disabled=used;
             }
         };
-        scope.takeLinePool= function (linesPool, lineIdx) {
-            if (lineIdx == 0 || linesPool[lineIdx].used) return;
-            scope.updatePool (linesPool, lineIdx, true);
+
+        scope.takeLinePool= function (linesPool, channel, lineIdx) {
+            if (lineIdx !== channel.value) scope.callback ([channel.numid], [lineIdx]);
+            if (lineIdx != 0 && !linesPool[lineIdx].used) scope.updatePool (linesPool, lineIdx, true);
         };
-        scope.freeLinePool= function (linesPool, lineIdx) {
-            if (lineIdx == 0) return;
-            scope.updatePool (linesPool, lineIdx, false);
+
+        scope.freeLinePool= function (linesPool, channel, lineIdx) {
+            if (lineIdx !== channel.value) scope.updatePool (linesPool, lineIdx, false);
+            if (lineIdx != 0) scope.callback ([channel.numid], [0]);
         };
 
         // parse input/output Source/Route params
         scope.ProcessRouteSource = function (line) {
 
             var params = {
-                name:  line.name,
+                name:  line.name +' numid='+line.numid,
                 actif: line.actif,
                 numid: line.numid,
-                value: line.value,
+                value: line.value [0], // alsa place unique value within an array
                 line:  line
             };
             return params;
         };
 
-        scope.ProcessFader = function (channel) {
+        scope.ProcessFader = function (channel, input, output) {
             var fader = {
-                numid  : channel.numid,
-                actif  : channel.actif,
-                value  : channel.value,
-                notLess: channel.ctrl.min,
-                notMore: channel.ctrl.max,
-                byStep : channel.ctrl.step
+
+                name   : channel.name + " numid="+channel.numid,
+                channel : {
+                    numid  : channel.numid,
+                    actif  : channel.actif,
+                    idxin  : input,
+                    idxout : output
+                },
+                ctrl   : { // crtrl sub-obj maps with sliders initialisation API
+                    value  : channel.value,
+                    notLess: channel.ctrl.min,
+                    notMore: channel.ctrl.max,
+                    byStep : channel.ctrl.step
+                }
+                // channel: channel
                 //tlv  : channel.tlv
                 //acl  : channel.acl
             };
             return fader;
         };
 
-        // parse Matrix Playback and Route to create a mono volume matrix mix
-        scope.ProcessStereoMix = function (leftMix, rightMix) {
 
-            var volumeMix = [];
-
-            // processing playback volumes both channel should have the same length
-            for (var idx = 0; idx < leftMix.volumes.length; idx = idx + 2) {
-
-                var stereoMix = {
-                    leftMix: {
-                        title  : leftMix.volumes [idx].name, // use left mix name
-                        leftFader:  scope.ProcessFader (leftMix.volumes [idx]),
-                        rightFader: scope.ProcessFader (leftMix.volumes [idx])
-                    },
-                    rightMix: {
-                        title  : leftMix.volumes [idx+1].name, // use left mix name
-                        leftFader:  scope.ProcessFader (rightMix.volumes [idx]),
-                        rightFader: scope.ProcessFader (rightMix.volumes [idx])
-                    }
-                };
-                volumeMix.push(stereoMix);
-            }
-            return volumeMix;
-        };
-        
         // call when internal model value changes
-        model.$formatters.unshift(function(modelvalue) {
+        scope.initWidget = function(initvalues) {
 
-            if (!modelvalue) return; // make sure we have some data to work with
+            if (!initvalues) return; // make sure we have some data to work with
 
             // prepare array to pass date to widget
             var matrixSources = [];
@@ -121,113 +108,165 @@ function scarletteCapture($log) {
             var matrixMixVols = [];
 
             // use 1st Capture lines to collect enums [common/shared pool for all capture/sources]
-            var sourceref = modelvalue.sources[1].ctrl.enums;
+            var sourceref = initvalues.sources[1].ctrl.enums;
+
             for (var idx=0; idx < sourceref.length; idx ++) {
                 scope.matrixSourcesPool.push({id: idx, name: sourceref [idx], used: false, options: []});
-            };
+            }
 
-            // processing input capture lines
-            for (var idx = 0; idx < modelvalue.sources.length; idx = idx + 2) {
+            // processing source capture routes
+            for (var idx = 0; idx < initvalues.sources.length; idx = idx + scope.faderGroup) {
 
-                var leftLine  = modelvalue.sources [idx];
-                var rightLine = modelvalue.sources [idx + 1];
-                var label = '[' + (idx + 1) + '/' + (idx + 2) + ']';
-                var stereolines = {
-                    uid: leftLine.numid + '-' + rightLine.numid,
-                    title: "Stereo Capture Line " + label,
-                    label: 'Line ' + label,
-                    name: 'Capt ' + label,
+                var lines = [];
+                var numids= [];
+                var idxs= [];
+
+                // group lines in mono/stereo
+                for (var jdx = 0; jdx < scope.faderGroup; jdx ++) {
+                    idxs.push (idx+jdx+1); // do not start line count at zero
+                    numids.push (initvalues.sources[idx + jdx].numid);
+                    lines.push(scope.ProcessRouteSource (initvalues.sources[idx + jdx]));
+                }
+
+                var linesgroup = {
+                    uid  : "Numid" + JSON.stringify(numids),
+                    label: "Line " + JSON.stringify(idxs),
+                    name : 'Capture Source ' + JSON.stringify(idxs),
                     matrixLinesPool: scope.matrixSourcesPool,
-                    leftLine : scope.ProcessRouteSource(leftLine),
-                    rightLine: scope.ProcessRouteSource(rightLine)
+                    lines: lines
                 };
 
-                //$log.log ("[idx]", idx, "stereo line=", stereolines)
-                matrixSources.push(stereolines);
+                //$log.log ("[idx]", idx, "stereo line=", linesgroup)
+                matrixSources.push(linesgroup);
             }
             
-            // use 1st Route lines to collect enums [global common/shared pool for all output/route]
-            var routeref = modelvalue.routes[1].ctrl.enums;
+            // use 1st Route Playback lines to collect enums [global common/shared pool for all output/route]
+            var routeref = initvalues.routes[1].ctrl.enums;
             for (var idx=0; idx < routeref.length; idx ++) {
                 scope.matrixRoutesPool.push ({id: idx , name:  routeref [idx], used: false, options: []});
             };
             // $log.log ("matrixRoutesPool=", scope.matrixRoutesPool);
 
-            // processing input capture lines
-            for (var idx = 0; idx < modelvalue.routes.length; idx = idx + 2) {
+            // processing output route playback
+            for (var idx = 0; idx < initvalues.routes.length; idx = idx + + scope.faderGroup) {
 
-                var leftLine  = modelvalue.routes [idx];
-                var rightLine = modelvalue.routes [idx + 1];
-                var label = '[' + (idx + 1) + '/' + (idx + 2) + ']';
-                var stereolines = {
-                    uid: leftLine.numid + '-' + rightLine.numid,
-                    title: "Stereo Output Route" + label,
-                    label: 'Route ' + label,
-                    name: 'Out '  + label,
+                var lines = [];
+                var numids= [];
+                var idxs= [];
+
+                // group lines in mono/stereo
+                for (var jdx = 0; jdx < scope.faderGroup; jdx ++) {
+                    idxs.push (idx+jdx+1); // do not start line count at zero
+                    numids.push (initvalues.routes[idx + jdx].numid);
+                    lines.push(scope.ProcessRouteSource (initvalues.routes[idx + jdx]));
+                }
+
+                var linesgroup = {
+                    uid: "Numid" + JSON.stringify(numids),
+                    label: "Route " + JSON.stringify(idxs),
+                    name: 'Playback Route ' + JSON.stringify(idxs),
                     matrixLinesPool: scope.matrixRoutesPool,
-                    leftLine : scope.ProcessRouteSource(leftLine),
-                    rightLine: scope.ProcessRouteSource(rightLine)
+                    lines: lines
                 };
 
-                //$log.log ("[idx]", idx, "stereo line=", stereolines)
-                matrixRoutes.push(stereolines);
+                //$log.log ("[idx]", idx, "stereo line=", linesgroup)
+                matrixRoutes.push(linesgroup);
             }
 
-            // groupe Matrix mix in stereo output channel
-            for (var mixIdx = 0; mixIdx < modelvalue.volumes.length; mixIdx = mixIdx +2) {
-                var leftVol   = modelvalue.volumes [mixIdx];
-                var rightVol  = modelvalue.volumes [mixIdx+1];
+            // group Matrix mix in mono/stereo output channel
+            for (var idx = 0; idx < initvalues.mixes.length; idx = idx + scope.mixerGroup) {
+                var mixname=[];
+                var mixvols= [];
 
-                var stereoVol = {
-                    name      : "Mix-" + leftVol.name + " / " + rightVol.name,
-                    stereomix : scope.ProcessStereoMix (leftVol, rightVol)
+                // $log.log ("volumes= ", initvalues.mixes[idx]);
+                // build mix name
+                for (var jdx = 0; jdx < scope.mixerGroup; jdx++) {
+                    mixname.push (initvalues.mixes [idx+jdx].name);
+                }
+                //console.log ("1: idx=%d jdx=%d kdx=%d kdx=%d", idx, jdx, kdx, kdx);
+
+                // for each mixer within a mixer group
+                for (var jdx= 0; jdx < initvalues.mixes[idx].volumes.length; jdx += scope.faderGroup) {
+                   var fadergroup=[];
+
+                    //console.log ("2: idx=%d jdx=%d kdx=%d kdx=%d", idx, jdx, kdx, kdx);
+
+                    // group faders within a given mixer group
+                    for (var kdx = jdx; kdx < jdx + scope.faderGroup; kdx++) {
+                        //console.log ("3: idx=%d jdx=%d kdx=%d zdx=%d", idx, jdx, kdx, zdx);
+
+                        // scan fader line within each group
+                        var mixergroup=[];
+                        for (var zdx = idx; zdx < (idx+scope.mixerGroup); zdx++) {
+                            //console.log ("4: idx=%d jdx=%d kdx=%d zdx=%d", idx, jdx, kdx, zdx);
+
+                            // within groups loop on fader lines and build input/output channel index
+                            mixergroup.push(scope.ProcessFader (initvalues.mixes [zdx].volumes[kdx], kdx-jdx, zdx-idx));
+                            //$log.log (" mixergroup.push=", scope.ProcessFader (initvalues.mixes [zdx].volumes[kdx], kdx-jdx, zdx-idx))
+                        }
+                        fadergroup.push (mixergroup);
+                    }
+
+                   mixvols.push (fadergroup);
+                }
+
+                // build Mixgroup object
+                var linesgroup = {
+                    name  : "Mix:" + mixname.toString(),
+                    mixvol : mixvols
                 };
-                // $log.log ("stereoVol=", stereoVol);
-                matrixMixVols.push (stereoVol);
-            };
+
+                // $log.log ("linesgroup=", linesgroup);
+                matrixMixVols.push (linesgroup);
+            }
 
             // update scope in one big chunk to avoid flickering
             scope.matrixSources = matrixSources;
             scope.matrixRoutes  = matrixRoutes;
             scope.matrixMixVols = matrixMixVols;
 
-            // $log.log ("matrixSources=" , matrixSources);
-            // $log.log ("matrixRoutes="  , matrixRoutes);
+            //$log.log ("matrixSources=" , matrixSources);
+            //$log.log ("matrixRoutes="  , matrixRoutes);
             $log.log ("matrixMixVolsMix=" , matrixMixVols);
-            //}
-        }); // end formatter
-
+        }; // end init widget
 
         // export call back
         scope.MatrixSourcesPoolCB = {
-           take: function (lineIdx) {scope.takeLinePool (scope.matrixSourcesPool, lineIdx)} ,
-           free: function (lineIdx) {scope.freeLinePool (scope.matrixSourcesPool, lineIdx)}
+           take: function (channel, lineIdx) {scope.takeLinePool (scope.matrixSourcesPool, channel, lineIdx)} ,
+           free: function (channel, lineIdx) {scope.freeLinePool (scope.matrixSourcesPool, channel, lineIdx)}
         };
 
         // export call back
         scope.MatrixRoutesPoolCB = {
-           take: function (lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, lineIdx)} ,
-           free: function (lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, lineIdx)}
+           take: function (channel, lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, channel, lineIdx)} ,
+           free: function (channel, lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, channel, lineIdx)}
         };
 
         // call each time a volume slider moves
-        scope.ActivateCtrlsCB = function (alsaCtrls) {
+        scope.ActivateCtrlsCB = function (numids, value) {
 
-            $log.log ("matrixMixVolscallback alsaCtrls=", alsaCtrls);
+            $log.log ("scarletteCapture CB numids=%j value=%d", numids, value);
+            scope.callback (numids, [value]); // push request to ScarlettMixerMod values should be an array
 
-        }
+        };
+
+        scope.mixerGroup = parseInt (attrs.mixerGroup) || 2;
+        scope.faderGroup = parseInt (attrs.faderGroup) || 2;
+        scope.$watch ('initvalues', function () { 	// init Values may arrive late
+            if (scope.initvalues) scope.initWidget(scope.initvalues);
+        });
     };
 
     return {
         templateUrl: "partials/scarlett-capture.html",
-        require: 'ngModel',
         scope: {
-            callback : '='
+            callback  : '=',
+            initvalues : '='
         },
         restrict: 'E',
         link: link
     };
 };
 
-console.log ("Scarlett Capture directive Initialized");
+console.log ("Scarlett Capture directive Loaded");
 

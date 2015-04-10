@@ -5,7 +5,7 @@
             <div class="ajm-matrix-volume-channel left">
                 <div class="ajm-matrix-volume-fader" ng-repeat="faderline in VolumeGroup">
                 <range-slider vertical="true" class="radius " title="{{faderline.name}}" formatter="FaderSliderCB" callback="FaderSliderCB" inithook="SliderInit"
-                              initvalues="faderline.ctrl" cbhandle="faderline.channel" disable="{{$index !== 0}}" display-target="handle"> </range-slider>
+                              initvalues="faderline.ctrl" cbhandle="faderline.channel" disable="{{$index !== 0}}" display-target="handle"/>
                 </div>
                 <span ng-click="StereoMix($event,$index)" class="ajm-matrix-volume-button pfl-mono pfl-button-actif">&infin;</span>
             </div>

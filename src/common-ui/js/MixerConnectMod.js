@@ -26,23 +26,23 @@
 
 'use strict';
 
-var newModule = angular.module('ajg-mixer-connect', []);
+var newModule = angular.module('ajm-mixer-connect', []);
 
 // http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
-newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location','$route'
+newModule.directive ('mixerConnect', ["$log", '$timeout', '$http','$location','$route'
                    , function($log, $timeout, $http, $location, $route) {
 
-    var template = '<div class="ajg-mixer-connect">'
-        + '<div><i class="ajg-connect-title">{{title}}<i>'
-        + '<ajg-monitor-status class="ajg-connect-status" icon={{icon}}"></ajg-monitor-status></div>'
+    var template = '<div class="ajm-mixer-connect">'
+        + '<div><i class="ajm-connect-title">{{title}}<i>'
+        + '<ajm-monitor-status class="ajm-connect-status" icon={{icon}}"></ajm-monitor-status></div>'
         + '<div  ng-repeat="sndcard in sndcards">'
         + '<div  title="{{sndcard.info}}"  ng-click="selectCard($index)">'
-        + '<div class="row ajg-connect-sndcard">'
+        + '<div class="row ajm-connect-sndcard">'
         + '<div class="small-10 columns">'
-        + '<span class="ajg-connect-name"> {{sndcard.name}} </span>'
+        + '<span class="ajm-connect-name"> {{sndcard.name}} </span>'
         + '</div>'
         + '<div class="small-1 columns">'
-        + '<span class="ajg-connect-uid">  {{sndcard.uid}}  </span>'
+        + '<span class="ajm-connect-uid">  {{sndcard.uid}}  </span>'
         + '</div>'
         + '</div>'
         + '</div>'
@@ -62,7 +62,7 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
 
                 // check if response is valid
                 if (response.ajgtype != "AJG_sndlist") {
-                    alert ("AJM:FATAL ajg-mixer-connect response=" +  response);
+                    alert ("AJM:FATAL ajm-mixer-connect response=" +  response);
                     return;
                 }
 
@@ -86,20 +86,17 @@ newModule.directive ('ajgMixerConnect', ["$log", '$timeout', '$http','$location'
            // build a mixer URI from sndcard short name. Use generic when no driver is avaliable
            var mixerpath = '/' + scope.sndcards [index].name.toLowerCase().replace(/ /g,'-');
            if (!mixerpath in $route.routes)  mixerpath = "/generic";
-           $location.path (mixerpath).search('card', scope.sndcards [index].cardid);
+           $location.path (mixerpath).search('card', "hw:" + scope.sndcards[index].cardid);
        };
 
-       scope.init = function () {
-           // Provide some default for missing attributes
-           scope.title     = attrs.title     || "Sound Cards @ Gateway";
-           scope.icon      = attrs.icon; // default defined within MonitorGateway
 
-           // request sound cards
-           scope.getCards();
+       // Provide some default for missing attributes
+       scope.title     = attrs.title     || "Sound Cards @ Gateway";
+       scope.icon      = attrs.icon; // default defined within MonitorGateway
 
-       };
+       // request sound cards
+       scope.getCards();
 
-       scope.init();
     }
 
     return {

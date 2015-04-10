@@ -20,32 +20,44 @@
    References:
      http://www.w3schools.com/tags/ref_colorpicker.asp
 
-   $Id: $
 */
 
-$hover-color :  rgba(255, 153, 255, .2);
-$actif-color:  rgba(255, 153, 255, .4);
-$text-color  :   darkslateblue;
 
+// display inside cursor slider
+.playback-switch-table {
+  display: block;
+  @include box-decoration;
+    padding: 0 0 0 .5rem;
+    margin-bottom: 0.5rem;
 
-// some usefull macros
-@mixin hover-background {
-  background-color: $hover-color !important;
-}
+  .switch-title {
+    padding: 0 0 0 .5rem;
+    margin-bottom: 0.2rem;
+  }
 
-@mixin actif-background {
-  background-color: $actif-color !important;
-}
+  .switch-stereo {
+    display: inline-block;
+  }
 
-@mixin shadow-decoration {
-  color: $text-color ;
-  border-color: rgba(150, 150, 150, 0.6);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(100, 100, 200, 0.6) !important;
-}
+  .playback-switch {
+    padding: .3rem;
 
-@mixin box-decoration {
-  border-color: rgb(0, 102, 204);
-  border-radius: 5px;
-  border-width: 1px;
-  border-style: solid;
+    &-button {
+      @include shadow-decoration;
+      line-height: 1.2rem;
+      text-align: center;
+      width: 1rem;
+      display: block;
+    }
+
+    &-button:hover, .button-actif {
+      @include hover-background;
+    }
+
+    .playback-switch-master {
+      float: left !important;
+      line-height: 2rem;
+      width: 2rem;
+    }
+  }
 }

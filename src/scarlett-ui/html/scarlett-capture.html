@@ -1,27 +1,26 @@
-<div class="ajg-scarlett-capture">
-
-     <div id="ajg-matrix-source-Pool" class="row collapse">
-         <div ng-repeat="matrixSource in matrixSources">
-             <matrix-source source=true callback="MatrixSourcesPoolCB" ng-model="matrixSource"></matrix-source>
-         </div>
-     </div>
-
-    <div id="ajg-matrix-volumes" class="row collapse">
-      <tabset >
-             <div  ng-repeat="mixVolume in matrixMixVols">
-                 <tab heading="{{mixVolume.name}}" active="mixVolume.active">
-                     <div class="row collapse">
-                         <div ng-repeat="volume in mixVolume.stereomix">
-                            <matrix-volume callback="ActivateCtrlsCB" ng-model="volume"></matrix-volume>
-                        </div>
-                     </div>
-                </tab>
-             </div>
-     </tabset>
+<div class="ajm-scarlett-capture">
+    <div class="row collapse">
+        <div  ng-repeat="matrixRoute in matrixRoutes">
+            <matrix-route route=true callback="MatrixRoutesPoolCB"  initvalues="matrixRoute" ></matrix-route>
+        </div>
     </div>
-     <div id="ajg-matrix-route-pool" class="row collapse">
-        <div ng-repeat="matrixRoute in matrixRoutes">
-            <matrix-source route=true callback="MatrixRoutesPoolCB" label="off" ng-model="matrixRoute"></matrix-source>
+
+    <div id="ajm-matrix-volumes" class="row collapse">
+        <tabset >
+            <div  ng-repeat="mixVolume in matrixMixVols">
+                <tab heading="{{mixVolume.name}}" actif="mixVolume.actif">
+                    <div class="row collapse">
+                        <div ng-repeat="volume in mixVolume.mixvol">
+                            <matrix-fader callback="ActivateCtrlsCB" initvalues="volume" ></matrix-fader>
+                        </div>
+                    </div>
+                </tab>
+            </div>
+        </tabset>
+    </div>
+    <div class="row collapse">
+        <div ng-repeat="matrixSource in matrixSources">
+            <matrix-route source=true callback="MatrixSourcesPoolCB" label="off" initvalues="matrixSource" ></matrix-route>
         </div>
     </div>
 </div>

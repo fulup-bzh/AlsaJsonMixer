@@ -20,7 +20,7 @@
    $Id: $
 */
 
-.ajg-monitor {
+.ajm-monitor {
    display: inline-block;
 
    &-gateway {
@@ -35,16 +35,16 @@
 
 }
 
-.ajg-offline {
-   .ajg-monitor-status {
+.ajm-offline {
+   .ajm-monitor-status {
       font-size: 18px;
       color: orangered;
       text-shadow: 1px 2px 6px #FFF, 0 0 0 #000, 1px 2px 6px #FFF;
    }
 }
 
-.ajg-online {
-   .ajg-monitor-status {
+.ajm-online {
+   .ajm-monitor-status {
       font-size: 18px;
       color: mediumspringgreen;
       text-shadow: 1px 2px 6px #FFF, 0 0 0 #000, 1px 2px 6px #FFF;

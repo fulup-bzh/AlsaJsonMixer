@@ -26,9 +26,9 @@
 
 'use strict';
 
-var newModule = angular.module('ajm-matrix-volume', []);
+var newModule = angular.module('ajm-matrix-fader', []);
 
-newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout) {
+newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout) {
 
 
     function link (scope, element, attrs, model) {
@@ -36,13 +36,13 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
         scope.prefad = [];
 
         // call when internal model value changes
-        model.$formatters.unshift(function(modelvalue) {
+        scope.initWidget = function(initvalues) {
 
-            if (!modelvalue) return; // make sure we have some data to work with
-            // $log.log ("matrixvolume directive modelvalue=", modelvalue)
+            if (!initvalues) return; // make sure we have some data to work with
+            //$log.log ("matrixFader initvalues=", initvalues)
 
             // we use left mix as reference and compute right mix from balance level
-            var refMix =  modelvalue[0];
+            var refMix =  initvalues[0];
             var range  = (refMix[0].notMore - refMix[0].notLess) /2;
 
             // check if mixes are groupe in stereo
@@ -55,7 +55,7 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             };
 
             // attach model to actif sliders and keep a local copy as MixerModel will be erase
-            scope.MixerModel  = modelvalue;
+            scope.MixerModel  = initvalues;
 
             // scan model value to extract useful information for UI
             scope.ctrlById= [];
@@ -63,43 +63,19 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             scope.syncMix= [];
 
             // do we have two output
-            var stereoIn  = (modelvalue.length === 2);
-            var stereoOut = (modelvalue[0].length === 2);
+            var stereoIn  = (initvalues.length === 2);
+            var stereoOut = (initvalues[0].length === 2);
 
-            for (var idx=0; idx < modelvalue.length; idx ++) {
+            for (var idx=0; idx < initvalues.length; idx ++) {
                 if (stereoOut) scope.syncMix [idx] = true;  // by default stereo mix are synchronized
 
-                var playback = modelvalue [idx];
+                var playback = initvalues [idx];
                 for (var jdx=0; jdx < playback.length; jdx ++) {
                     var current =  playback [jdx];
                     scope.ctrlById [playback [jdx].channel.numid] = playback [jdx].ctrl;
                 }
             }
-
-
-
-            if (scope.stereo) {
-                // Balances definition for both knob and attached shared slider
-                scope.leftBalanceModel = scope.rightBalanceModel = scope.sliderBalanceModel = {
-                    value: 0,
-                    notMore: range / 2,
-                    notLess: -1 * range / 2
-                };
-                scope.sliderBalanceModeldisabled = true; // do not display handle on slider
-
-                // keep track of ALSA controls numids Two Channels IN and Two channels out
-                scope.ctrlsNumid = {
-                    left: {
-                        mixLeft:  modelvalue[0][0].numid,  //Mix A line left
-                        mixRight: modelvalue[1][0].numid   //Mix B line left
-                    },
-                    right: {
-                        mixLeft:  modelvalue[0][1].numid,  //Mix A line right
-                        mixRight: modelvalue[1][1].numid   //Mix B line right
-                    }
-                };
-            }
-        });
+        };
 
         // this method sync/unsync stereo output channel [ex: Mix A/B]
         // sync sliders are disable to remove handle
@@ -230,23 +206,24 @@ newModule.directive('matrixVolume', ["$log", '$timeout', function($log, $timeout
             }
         };
 
-        scope.init = function() {
+        // initialize widget
+        scope.inputid  = attrs.id    || "analog-in-" + parseInt (Math.random() * 1000);
+        scope.name     = attrs.name  || "NoName";
+        scope.label    = attrs.label || "NoLabel";
+        scope.switchid  = attrs.id | "switch-" + parseInt (Math.random() * 1000);
+        scope.$watch ('initvalues', function () { 	// init Values may arrive late
+            if (scope.initvalues) scope.initWidget(scope.initvalues);
+        });
 
-            scope.inputid  = attrs.id    || "analog-in-" + parseInt (Math.random() * 1000);
-            scope.name     = attrs.name  || "NoName";
-            scope.label    = attrs.label || "NoLabel";
-        };
-
-        scope.init();
     }
 
     return {
-    templateUrl: "partials/matrix-volume.html",
+    templateUrl: "partials/matrix-fader.html",
     scope: {
-        callback: '='
+        callback: '=',
+        initvalues : '='
     },
     restrict: 'E',
-    require: 'ngModel',
     link: link
     };
 }]);

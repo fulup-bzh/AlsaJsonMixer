@@ -17,37 +17,36 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
- Object: this module processes return from http://localhost:1234/jsonapi?request=get-controls&sndcard=xx.
- As alsa-json is basically a flat port of amixer.c, it does not understand complex music oriented sound boards.
- This module parse returned information from AlsaJsonGateway and organise it a model that is compliant with
- Scarlett board logic.
+ Object: this module processes return from http://localhost:1234/jsonapi?request=ctl-get-all&cardid=hw:xx.
+ As AlSA retuens a flat control list of sndcard controls and does not understand complex music oriented sound boards.
+ This module parse returned information from AlsaJsonGateway and organises them in a model that is compliant with
+ Scarlett board logic and group them by mixers, capture, volumes, etc ...
 
- $Id: $
  */
 
 'use strict';
 
-// var newModule = angular.module('ajg-scarlett-mixer', []);
-
+// Lazy Directive load
 ngapp.addController ('ScarlettMixerController', ['$log', '$location',  '$http', ScarlettController]);
 function ScarlettController ($log, $location, $http) {
 
     var scope = this;  // as controler model in route
 
-    scope.getControls = function (sndcard) {
+    scope.getControls = function () {
+
 
         // send AJAX request to Alsa-Json-Gateway
-        var query= {request:"ctrl-get-all", cardid: sndcard};
+        var query= {request:"ctrl-get-all", cardid: scope.cardid};
         var handler = $http.get('/jsonapi', {params: query});
 
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
             scope.sndcard  = response.sndcard;
-            var sources=[], mixes=[], routes=[];
+            var sources=[], mixes=[], routes=[], mSwitches=[], iSwitches=[], pSwitches=[], mVolumes=[], mSources=[];
 
             // verify response is a valid "AJG_ctrls",
             if (response.ajgtype !=  "AJG_ctrls") {
-                alert ("AJM:FATAL ScarlettMixerController sndcard=" +sndcard +", response=" + JSON.stringify (response));
+                alert ("AJM:FATAL ScarlettMixerController sndcard=" +scope.cardid +", response=" + JSON.stringify (response));
                 return;
             }
             // extract controls from response
@@ -75,29 +74,62 @@ function ScarlettController ($log, $location, $http) {
                     if (!mixes [mixnum]) {
                         mixes [mixnum] = {
                             name    : mixnum.toUpperCase(),
-                            route   : "",
                             volumes : []
                         };
                     }
                     mixes[mixnum].volumes.push (control);
                 }
-               
+
+                // Master 2 (Headphone 1) Playback Switch
+                if (name[0] === 'master' && name[name.length-1] === "switch") {
+                    mSwitches.push (control);
+                }
+
+                // Master 1 (Monitor) Playback Volume
+                if (name[0] === 'master' && name[name.length-1] === "volume") {
+                    mVolumes.push (control);
+                }
+
+                // Master 1R (Monitor) Source Playback Enum
+                if (name[0] === 'master' && name[name.length-1] === "enum") {
+                    mSources.push (control);
+                }
+
+                // Input 2 Pad Switch
+                if (name[0] === 'input' && name[2] == 'pad') {
+                    pSwitches.push (control);
+                }
+
+                // Input 2 Impedance Switch
+                if (name[0] === 'input' && name[2] === "impedance") {
+                    iSwitches.push (control);
+                }
+
             } // end loop for controls
 
 
             // move mixes from associate array to standard array for easier handling
-            var volumes = [];
+            var mixesarray = [];
             if (mixes) Object.keys(mixes).forEach(function(key, index) {
-                volumes.push (mixes[key]);
+                mixesarray.push (mixes[key]);
             }, mixes);
 
             // push result to scope globally to limit number of watch events
             scope.alsamixer = {
                 sources: sources,
-                routes : routes,
-                volumes  : volumes
+                routes: routes,
+                mixes: mixesarray
             };
 
+            scope.alsamaster = {
+                volumes: mVolumes,
+                sources: mSources,
+                switches : {
+                    master    : mSwitches,
+                    pad       : pSwitches,
+                    impedance : iSwitches
+                }
+            };
         });
 
         handler.error(function(status, errcode, headers) {
@@ -106,16 +138,29 @@ function ScarlettController ($log, $location, $http) {
     };
 
     // this method is called each time user manipulates UI
-    scope.SendAlsaCtrlsCB = function (alsaCtrls) {
+    scope.SendAlsaCtrlsCB = function (numids, values) {
 
-      $log.log ("Scarlett Mixer CB alsaCtrls=", alsaCtrls);
+      // send AJAX request to Alsa-Json-Gateway
+      var query= {request:"ctrl-set-many", cardid: scope.cardid, numids: JSON.stringify(numids), args:JSON.stringify(values)};
+      var handler = $http.get('/jsonapi', {params: query});
+
+      // process json response from alsa-gateway
+      handler.success(function(response, errcode, headers, config) {
+          // should we do something in case of success ???
+      });
+
+      handler.error(function(status, errcode, headers) {
+         alert ("Fail to send Card Controls to AlsaJsonGateway")
+      });
 
     };
+
 
     scope.init = function () {
 
         // extract sndcard index from URL's query
-        scope.getControls ($location.search().card);
+        scope.cardid = $location.search().card;
+        scope.getControls ();
 
     };
 

@@ -1,0 +1,15 @@
+<div class="ajm-scarlett-master">
+
+     <div class="row collapse">
+        <div  class="playback-switch-table">
+           <p class="switch-title">Playback Switch</p>
+           <playback-switch ng-repeat="playbackSwitch in switches.master" class="switch-stereo" initvalues="playbackSwitch"  callback="ActivateCtrlsCB" />
+       </div>
+     </div>
+     <div class="row collapse">
+     <div  class="master-volume-zone">
+         <p class="volume-title">Playback Master Volume</p>
+         <master-volume  initvalues="volumes" callback="ActivateCtrlsCB" />
+     </div>
+     </div>
+</div>

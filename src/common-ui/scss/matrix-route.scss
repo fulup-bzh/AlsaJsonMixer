@@ -24,19 +24,22 @@
 */
 
 
-.ajg-stereo-input {
+.ajm-stereo-input {
   @include widget-decoration;
+  //width: inherit;
 
   // Label is an input zone we need to overwrite Foundation defaults
   &-linein {
    @include label-decoration;
+
   }
 
   &-input-name:hover {
     @include hover-background;
   }
 
-  .ajg-select-left {
+  .ajm-select-0 > select {
     direction: rtl;
+    text-align: left;
   }
 }

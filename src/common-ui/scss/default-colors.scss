@@ -23,11 +23,15 @@
    $Id: $
 */
 
-$hover-color :  rgba(255, 153, 255, .2);
-$active-color:  rgba(255, 153, 255, .4);
+$hover-color :  rgba(255, 153, 255, .7);
+$actif-color:  rgba(255, 153, 255, .5);
 $text-color  :   darkslateblue;
 
-.ajg-global-panel {
+.row {
+    max-width: 100% !important;
+}
+
+.ajm-global-panel {
   border-color: rgba(82,168,236,0.8) ;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset, 0 0 8px rgba(82,168,236,1);
   color: darkslateblue;
@@ -42,8 +46,8 @@ $text-color  :   darkslateblue;
   background-color: $hover-color !important;
 }
 
-@mixin active-background {
-  background-color: $active-color !important;
+@mixin actif-background {
+  background-color: $actif-color !important;
 }
 
 @mixin shadow-decoration {

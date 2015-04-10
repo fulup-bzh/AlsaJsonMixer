@@ -1,10 +1,15 @@
 <!-- use ConnectMixerMod to retrieve sound cards index from gateway -->
-<div class="ajg-scarlett" >
+<div class="ajm-scarlett" >
 	<div class="row collapse">
-		<i class="ajg-scarlett-title" title="{{Scarlett.sndcard.info}}">{{Scarlett.sndcard.name}}</i>
-		<ajg-monitor-status class="ajg-scarlett-status"> </ajg-monitor-status>
+		<i class="ajm-scarlett-title" title="{{Scarlett.sndcard.info}}">{{Scarlett.sndcard.name}}</i>
+		<ajm-monitor-status class="ajm-scarlett-status" />
 	</div>
 	<div class="row collapse">
-		<scarlett-capture ng-model="Scarlett.alsamixer" callback="Scarlett.SendAlsaCtrlsCB"></scarlett-capture>
+		<div class="small-9 columns">
+			<scarlett-capture initvalues="Scarlett.alsamixer" callback="Scarlett.SendAlsaCtrlsCB" />
+		</div>
+		<div class="small-2 columns left">
+			<scarlett-master initvalues="Scarlett.alsamaster" callback="Scarlett.SendAlsaCtrlsCB" />
+		</div>
 	</div>
 </div>
