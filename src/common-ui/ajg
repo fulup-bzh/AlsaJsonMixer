@@ -48,6 +48,7 @@
 	<script src="dev/MasterVolumeMod.js" /></script>
   	<script src="dev/KnobKnobMod.js" /></script>
    	<script src="dev/PlaybackSwitchMod.js" /></script>
+   	<script src="dev/MatrixLabelMod.js" /></script>
 
 	<!-- HTML5 Angular Application Base URL-->
 	<base href="/mixers/index.html">

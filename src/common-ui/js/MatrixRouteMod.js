@@ -110,16 +110,16 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
     }
 }]);
 
-newModule.directive('matrixRoute', ["$log", '$timeout', function($log, $timeout) {
 
+newModule.directive('matrixRoute', ["$log", function($log) {
 
     var template
    = '<div class="small-1 columns ajm-stereo-input">'
-   + '<input ng-show="route" type="text" class="ajm-stereo-input-linein" value="{{label}}">'
+   + '<matrix-label ng-show="source" class="ajm-stereo-input-linein" initvalues="info"></matrix-label>'
    + '<div class="ajm-matrix-volume-fader" ng-repeat="line in MatrixLines">'
-   + '<line-input class="ajm-select-{{$index}}"  matrix-lines-pool="matrixLinesPool" initvalues=line  callback="selected"></line-input>'
+   + '<line-input class="ajm-select-{{$index}}"  matrix-lines-pool="matrixLinesPool" initvalues="line" callback="selected"></line-input>'
    + '</div>'
-   + '<input ng-show="source" type="text" class="ajm-stereo-input-linein" value="{{label}}">'
+   + '<matrix-label ng-show="route" class="ajm-stereo-input-linein" initvalues="info"></matrix-label>'
    + '</div>';
 
     function link (scope, element, attrs, model) {
@@ -135,8 +135,12 @@ newModule.directive('matrixRoute', ["$log", '$timeout', function($log, $timeout)
             // $log.log ("matrix-source directive", initvalues);
 
             scope.MatrixLines    = initvalues.lines;
-            scope.label          = initvalues.label;
             scope.matrixLinesPool= initvalues.matrixLinesPool;
+
+            scope.info = {
+                uid   : initvalues.uid,
+                label : initvalues.label
+            }
         };
 
         scope.selected = function (channel, selection, initphase) {
@@ -173,5 +177,5 @@ newModule.directive('matrixRoute', ["$log", '$timeout', function($log, $timeout)
     };
 }]);
 
-console.log ("stereo input loaded");
+console.log ("Matrix Route loaded");
 

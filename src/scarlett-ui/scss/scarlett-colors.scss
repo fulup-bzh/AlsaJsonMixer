@@ -49,3 +49,15 @@ $text-color  :   darkslateblue;
   border-width: 1px;
   border-style: solid;
 }
+
+
+@mixin label-decoration {
+  text-align: center;
+  margin: .3rem 0 .3rem .5rem !important;
+  font-size: .75rem !important;;
+  height: 1.5rem !important;
+  padding: 0.1rem !important;
+  border-radius: 5px;
+  color: #191970 !important;
+  background-color: rgba(230, 230, 230, .7) !important;
+}

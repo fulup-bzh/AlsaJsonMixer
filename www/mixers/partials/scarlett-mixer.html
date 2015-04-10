@@ -1,8 +1,12 @@
 <!-- use ConnectMixerMod to retrieve sound cards index from gateway -->
 <div class="ajm-scarlett" >
 	<div class="row collapse">
-		<i class="ajm-scarlett-title" title="{{Scarlett.sndcard.info}}">{{Scarlett.sndcard.name}}</i>
-		<ajm-monitor-status class="ajm-scarlett-status" />
+		<div class="ajm-scarlett-title">
+			<i class="sndcard-name" title="{{Scarlett.sndcard.info}}">{{Scarlett.sndcard.name}}</i>
+			<matrix-label id="session" class="sesssion-name" title="Gateway Session Name" initvalues="Scarlett.SessionLabelName" labelpool="Scarlett.SessionLabelPool"></matrix-label>
+			<i class="session-save fa fa-floppy-o" ng-click="Scarlett.SessionSave()"></i>
+			<monitor-status class="sndcard-status"></monitor-status>
+  	    </div>
 	</div>
 	<div class="row collapse">
 		<div class="small-9 columns">

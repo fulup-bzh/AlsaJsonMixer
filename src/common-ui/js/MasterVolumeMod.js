@@ -80,5 +80,5 @@ function ajgMasterVolume ($log) {
     }
 }
 
-console.log ("AJM Master Volume Loaded");
+console.log ("Master Volume Loaded");
 

@@ -14,11 +14,14 @@ var newModule = angular.module('ajm-knob-knob', []);
 
 newModule.directive('knobKnob', ["$log", function($log) {
 
-	var template = '<div class="knob-knob" ng-mouseover="mouseEnter(1)" ng-mouseleave="mouseEnter(0)" ng-mousedown="toggleState()"> '
-		         + '<i class="top"></i><div class="base"></div>'
-		         + '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="initvalues"></range-slider>'
-			     + '<span class="display-value">{{value}} </span>'
-		         + '</div>';
+	var template = '<div class="knob-button"  > '
+			+ '<matrix-label type="text" class="knob-title" value="{{label}}"></matrix-label>'
+	        + '<div class="knob-knob" ng-mouseover="mouseEnter(1)" ng-mouseleave="mouseEnter(0)" ng-mousedown="toggleState()"  > '
+		    + '<i class="top"></i><div class="base" ></div>'
+			+ '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="initvalues"></range-slider>'
+    		+ '</div>'
+			+ '<span class="knob-value">{{value}}</span>'
+			+ '</div>';
 
 	function link(scope, elem, attrs, model) {
 
@@ -103,3 +106,5 @@ newModule.directive('knobKnob', ["$log", function($log) {
 		link: link
 	}
 }]);
+
+console.log ("KnobKnob Loaded");

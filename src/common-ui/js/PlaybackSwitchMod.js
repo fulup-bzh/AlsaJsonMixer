@@ -84,3 +84,6 @@ newModule.directive('playbackSwitch', ["$log", function($log, $timeout) {
 		link: link
 	}
 }]);
+
+console.log ("Playback Switch Loaded");
+

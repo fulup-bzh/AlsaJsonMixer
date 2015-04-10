@@ -27,17 +27,58 @@
 'use strict';
 
 // Lazy Directive load
-ngapp.addController ('ScarlettMixerController', ['$log', '$location',  '$http', ScarlettController]);
-function ScarlettController ($log, $location, $http) {
+ngapp.addController ('ScarlettMixerController', ['$log', '$location', '$http', 'Notification', ScarlettController]);
+function ScarlettController ($log, $location, $http, Notification) {
 
     var scope = this;  // as controler model in route
+    scope.SessionLabelPool = []; // where to store label pool
+    scope.SessionLabelName = {uid:'main-session', label:'default-session'};
 
+
+    // load default session upfront
+    scope.loadSession = function (sessionname) {
+
+        // send AJAX request to Alsa-Json-Gateway
+        var query= {request:"session-load", cardid: scope.cardid, args: sessionname};
+        var handler = $http.get('/jsonapi', {params: query});
+
+        handler.error(function(status, errcode, headers) {
+            alert ("Fail to upload " + sessionname + " from AlsaJsonGateway")
+        });
+
+        // process json response from alsa-gateway
+        handler.success(function(response, errcode, headers, config) {
+            scope.sndcard = response.sndcard;
+
+            // verify response is a valid "AJG_ctrls",
+            if (response.ajgtype != "AJG_session") {
+                alert("AJM:FAIL ScarlettMixerController sndcard=" + scope.cardid + ", response=" + JSON.stringify(response));
+                return;
+            }
+            // make sure we ready to display session
+            if (!scope.SessionLabelPool.setValue) {
+                alert ("SessionLabelPool not ready");
+                return;
+            }
+            // extract labels and push then to UI
+            var labels = response.data.labels;
+            for (var idx=0; idx < labels.length; idx ++) {
+                var record = labels [idx];
+                scope.SessionLabelPool.setValue (record.uid, record.label);
+            }
+        });
+    };
+
+    // get current board controls
     scope.getControls = function () {
-
 
         // send AJAX request to Alsa-Json-Gateway
         var query= {request:"ctrl-get-all", cardid: scope.cardid};
         var handler = $http.get('/jsonapi', {params: query});
+
+        handler.error(function(status, errcode, headers) {
+            alert ("Fail to get SndCard's controls from AlsaJsonGateway")
+        });
 
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
@@ -107,7 +148,6 @@ function ScarlettController ($log, $location, $http) {
 
             } // end loop for controls
 
-
             // move mixes from associate array to standard array for easier handling
             var mixesarray = [];
             if (mixes) Object.keys(mixes).forEach(function(key, index) {
@@ -132,9 +172,26 @@ function ScarlettController ($log, $location, $http) {
             };
         });
 
-        handler.error(function(status, errcode, headers) {
-            alert ("Fail to get Card Controls from AlsaJsonGateway")
-        });
+
+    };
+
+    scope.SessionSave =function () {
+       var sessionname = scope.SessionLabelPool.getValue ('main-session');
+       var labelspool  = scope.SessionLabelPool.getPool ();
+       $log.log ("session=", sessionname, "pool=", labelspool);
+
+       // send AJAX request to Alsa-Json-Gateway
+       var query= {request:"session-store", cardid: scope.cardid, numids: JSON.stringify(numids), name: sessionname, args:JSON.stringify(values)};
+       var handler = $http.get('/jsonapi', {params: query});
+
+       // process json response from alsa-gateway
+       handler.success(function(response, errcode, headers, config) {
+          Notification.success ({message: "Session Store on AlsaJsonGateway", delay: 3000});
+       });
+
+       handler.error(function(status, errcode, headers) {
+            alert ("Fail to Store Session onto AlsaJsonGateway")
+       });
     };
 
     // this method is called each time user manipulates UI
@@ -155,13 +212,11 @@ function ScarlettController ($log, $location, $http) {
 
     };
 
-
     scope.init = function () {
 
         // extract sndcard index from URL's query
         scope.cardid = $location.search().card;
         scope.getControls ();
-
     };
 
     scope.init();

@@ -59,14 +59,34 @@
   }
 
   &-title {
+    width: 100%;
+    .sndcard-name {
       display: inline-block;
       font-size: 1rem;
       font-style: italic;
-  }
+    }
 
-  &-status {
-    width: auto;
-    float: right;
+    .sesssion-name > .matrix-label {
+      @include label-decoration;
+      max-width: 20rem;
+      display: inline-block;
+      text-align: right;
+    }
+
+    .session-save {
+      margin: 0 0 0 .5rem;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+    }
+    .session-save:hover {
+      @include hover-background;
+      color: rgb(255, 51, 153);
+    }
+
+    .sndcard-status {
+      width: auto;
+      float: right;
+    }
   }
 
   // did not found out why ajm-matrix-volumes is 1.5rem too big !!!

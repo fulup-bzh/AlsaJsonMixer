@@ -16,93 +16,92 @@ $knob-occupation: 80%;
 }
 
 
+.knob-button {
+  display: inline-block;
 
-.knob-knob {
-  width: $knob-size;
-  height:$knob-size;
-  position:relative;
-
-  // round button image
-  .top {
-		position: absolute;
-        margin-left: 15%;
-		top: 0;
-		left: 0;
-		width: $knob-occupation;
-		height: $knob-occupation;
-		background: url('../images/knob-disable.png') no-repeat;
-		background-size: 100% 100%;
-		z-index:2;
-		cursor: default !important;
+  .matrix-label {
+	@include label-decoration;
   }
 
-  // round button shadow
-  .base{
-		margin-left: 15%;
-		width:$knob-occupation;
-		height:$knob-occupation;
-		border-radius:50%;
-		box-shadow:0 3px 0 #4a5056,3px 3px 3px #000;
-		position:absolute;
-		top:0;
-		left:0;
-		z-index:1;
-  }
+  .knob-knob {
+	width: $knob-size;
+	height: $knob-size;
+	position: relative;
+	float: left;
 
-   // marker sign on top of knob
-  .top:after{
-		content:'';
-		width:15%;
-		height:15%;
-		background-color:#666;
-		position:absolute;
-		top:5%;
-	    left: 25%;
-		border-radius: 50%;
-		cursor:default !important;
-		box-shadow: 0 0 1px #5a5a5a inset;
-  		z-index:3;
-  }
-
-
-  //  .button-actif {
-  //	@include knob-actif;
-  //  }
-
-  .bzm-range-slider {
-	position: absolute;
-	top:   0%;
-	width: 120%;
-	height: $slider-height;
-	background-color: rgba(204, 255, 102, 0.6)  !important;
-	z-index:4;
-
-	.range-slider-active-segment {
-	  background-color: rgba(255, 102, 255, 0.6);
-	  border-radius: 5px;
-	  height: inherit;
+	// round button image
+	.top {
+	  position: absolute;
+	  margin-left: 15%;
+	  top: 0;
+	  left: 0;
+	  width: $knob-occupation;
+	  height: $knob-occupation;
+	  background: url('../images/knob-disable.png') no-repeat;
+	  background-size: 100% 100%;
+	  z-index: 2;
+	  cursor: default !important;
 	}
 
-	.range-slider-handle {
-	  background-color: rgba(51, 204, 51, .7) !important;
-	  width  : 1rem !important;
-	  height : 1rem !important;
+	// round button shadow
+	.base {
+	  margin-left: 15%;
+	  width: $knob-occupation;
+	  height: $knob-occupation;
 	  border-radius: 50%;
+	  box-shadow: 0 3px 0 #4a5056, 3px 3px 3px #000;
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  z-index: 1;
 	}
 
-	.range-slider-handle:hover {
-	  @include hover-background;
+	// marker sign on top of knob
+	.top:after {
+	  content: '';
+	  width: 15%;
+	  height: 15%;
+	  background-color: #666;
+	  position: absolute;
+	  top: 5%;
+	  left: 25%;
+	  border-radius: 50%;
+	  cursor: default !important;
+	  box-shadow: 0 0 1px #5a5a5a inset;
+	  z-index: 3;
+	}
+
+	.bzm-range-slider {
+	  position: absolute;
+	  top: 0%;
+	  width: 120%;
+	  height: $slider-height;
+	  background-color: rgba(204, 255, 102, 0.6) !important;
+	  z-index: 4;
+
+	  .range-slider-active-segment {
+		background-color: rgba(255, 102, 255, 0.6);
+		border-radius: 5px;
+		height: inherit;
+	  }
+
+	  .range-slider-handle {
+		background-color: rgba(51, 204, 51, .7) !important;
+		width: 1rem !important;
+		height: 1rem !important;
+		border-radius: 50%;
+	  }
+
+	  .range-slider-handle:hover {
+		@include hover-background;
+	  }
 	}
   }
-
-  .display-value {
-     @include shadow-decoration;
-	 bottom: -.5rem;
-	 right: 0;
-	 line-height: 1.2rem;
-	 position: absolute;
-	 display: block;
-  	 z-index:5;
+  .knob-value {
+	@include shadow-decoration;
+	display: inline-block;
+	margin: .5rem 0 0 .5rem;
+	line-height: 1.2rem;
   }
 }
 

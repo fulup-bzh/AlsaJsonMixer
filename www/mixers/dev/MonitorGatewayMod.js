@@ -29,7 +29,7 @@
 var newModule = angular.module('ajm-monitor-gateway', []);
 
 // http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
-newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$location','Notification'
+newModule.directive ('monitorStatus', ["$log", '$timeout', '$http', '$location','Notification'
                    , function($log, $timeout, $http, $location, Notification) {
 
 
@@ -131,5 +131,5 @@ newModule.directive ('ajgMonitorStatus', ["$log", '$timeout', '$http', '$locatio
     };
 }]);
 
-console.log ("Alsa Connect Module Initialized");
+console.log ("Monitor Gateway Loaded");
 

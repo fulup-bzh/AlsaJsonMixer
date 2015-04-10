@@ -37,14 +37,21 @@
    .master-volume-knob {
       display: inline-block;
       padding: .2rem;
+      width: 50%;
    }
 
    .master-volume-knob.valuecount-1 {
-
+      width: 100%;
       .knob-knob {
          width:  6rem;
          height: 6rem;
-         right:  0;
+      }
+
+      .knob-value {
+         @include shadow-decoration;
+         display: inline-block;
+         margin: .5rem 0 0 .5rem;
+         line-height: 1.2rem;
       }
    }
 }

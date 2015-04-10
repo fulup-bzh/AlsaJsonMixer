@@ -228,5 +228,5 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
     };
 }]);
 
-console.log ("stereo slider loaded");
+console.log ("Matrix Fader loaded");
 

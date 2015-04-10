@@ -34,7 +34,7 @@ newModule.directive ('mixerConnect', ["$log", '$timeout', '$http','$location','$
 
     var template = '<div class="ajm-mixer-connect">'
         + '<div><i class="ajm-connect-title">{{title}}<i>'
-        + '<ajm-monitor-status class="ajm-connect-status" icon={{icon}}"></ajm-monitor-status></div>'
+        + '<monitor-status class="ajm-connect-status" icon={{icon}}"></monitor-status></div>'
         + '<div  ng-repeat="sndcard in sndcards">'
         + '<div  title="{{sndcard.info}}"  ng-click="selectCard($index)">'
         + '<div class="row ajm-connect-sndcard">'
@@ -109,5 +109,5 @@ newModule.directive ('mixerConnect', ["$log", '$timeout', '$http','$location','$
     };
 }]);
 
-console.log ("Alsa Connect Module Initialized");
+console.log ("Mixer Connect Loaded");
 

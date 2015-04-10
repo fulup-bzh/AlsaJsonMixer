@@ -29,9 +29,8 @@
   //width: inherit;
 
   // Label is an input zone we need to overwrite Foundation defaults
-  &-linein {
+  &-linein, .matrix-label  {
    @include label-decoration;
-
   }
 
   &-input-name:hover {
@@ -40,6 +39,7 @@
 
   .ajm-select-0 > select {
     direction: rtl;
+    -webkit-direction: rtl;
     text-align: left;
   }
 }

@@ -28,7 +28,7 @@
 
 var ngapp = angular.module('mixer-ui-app', [
         'ngRoute', 'ui-notification', 'bzm-range-slider', 'mm.foundation', 'ajm-knob-knob', 'ajm-playback-switch'
-        ,'ajm-mixer-connect', 'ajm-monitor-gateway', 'ajm-matrix-route','ajm-matrix-fader', 'ajm-master-volume'
+        ,'ajm-mixer-connect', 'ajm-monitor-gateway', 'ajm-matrix-route','ajm-matrix-fader', 'ajm-master-volume', "ajm-matrix-label"
     ]
 );
 
