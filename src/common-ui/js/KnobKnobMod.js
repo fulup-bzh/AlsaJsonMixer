@@ -12,15 +12,15 @@
 
 var newModule = angular.module('ajm-knob-knob', []);
 
-newModule.directive('knobKnob', ["$log", function($log) {
+newModule.directive('knobKnob', ["$log", "CtrlByNumid", function($log, CtrlByNumid) {
 
-	var template = '<div class="knob-button"  > '
-			+ '<matrix-label type="text" class="knob-title" value="{{label}}"></matrix-label>'
-	        + '<div class="knob-knob" ng-mouseover="mouseEnter(1)" ng-mouseleave="mouseEnter(0)" ng-mousedown="toggleState()"  > '
-		    + '<i class="top"></i><div class="base" ></div>'
-			+ '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="initvalues"></range-slider>'
+	var template = '<div class="ajm-knob"  > '
+			+ '<matrix-label class="ajm-knob-title" initvalues="channel"></matrix-label>'
+	        + '<div class="ajm-knob-button" ng-mouseover="mouseEnter(1)" ng-mouseleave="mouseEnter(0)" ng-mousedown="toggleState()"  > '
+		    + '<i class="ajm-knob-top"></i><div class="ajm-knob-base" ></div>'
+			+ '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="ctrl"></range-slider>'
     		+ '</div>'
-			+ '<span class="knob-value">{{value}}</span>'
+			+ '<span class="ajm-knob-value">{{value}}</span>'
 			+ '</div>';
 
 	function link(scope, elem, attrs, model) {
@@ -29,33 +29,42 @@ newModule.directive('knobKnob', ["$log", function($log) {
 		scope.initWidget = function(initvalues) {
 
 			if (initvalues === undefined) return;
-			// console.log ("formatter Knob value=%j", initvalues);
+			// console.log ("InitWidget Knob value=%j", initvalues);
+
+			scope.ctrl   =initvalues.ctrl;
+			scope.channel=initvalues.channel;
 
 			// let's ignore any empty value
-			if ( initvalues.notMore) scope.range = initvalues.notMore - (initvalues.notLess || 0);
+			if ( scope.ctrl.notMore) scope.range = scope.ctrl.notMore - (scope.ctrl.notLess || 0);
 
-			if (!scope.handle) scope.handle= initvalues;
+			if (!scope.handle) scope.handle= scope.ctrl;
 
-			scope.setValue (scope.initvalues.value, undefined);
+			scope.setValue (scope.ctrl.value);
 
+			// save numid and register volume within central repository for session store/load
+			CtrlByNumid.register (scope.channel.numid, scope);
 		};
 
 		scope.setValue = function (value, slider) {
-			// ignore any non number value
-			if (isNaN(value)) return;
 
-			scope.value = value;
+			if (isNaN(value)) return; // hoops !!!
+			scope.value = value; // formatter value is not an array
+
 			var degree = ((scope.value/scope.range)*360);
 			scope.rotate (degree);
 
+			// balance equalisation not implement let's replicate value if needed
+			var values=[];
+			for (var idx=0; idx < scope.channel.count; idx++) {
+				values.push (value);
+			}
+
 			// if not initial state and callback define, let's report value
-			if (slider && scope.callback) scope.callback (value, scope.cbhandle);
+			if (slider && scope.callback) scope.callback (scope.channel.numid, values);
 		};
 
 		scope.rotate = function (angle) {
-
 			var rotate = (angle % 360);
-			// $log.log ("scope.rotate angle=%d", angle)
 			scope.knobtop.css('transform','rotate('+(rotate)+'deg)');
 		};
 
@@ -63,7 +72,6 @@ newModule.directive('knobKnob', ["$log", function($log) {
 
 			if (! scope.actif) {
 				scope.actif = true;
-				//scope.knobtop.addClass('button-actif');
 				elem.addClass('button-actif');
 			} else {
 				scope.actif = false;
@@ -74,14 +82,11 @@ newModule.directive('knobKnob', ["$log", function($log) {
 		// knob is hover
 		scope.mouseEnter =function (hover){
 			// scope.callback (scope.value, scope.knobid, scope.handle);
-			console.log ("knob mouseover hover=%d", hover)
-
 			if (hover) scope.enter = true;
 			else scope.enter=false;
 		};
 
 		// initialize widget
-
 		scope.knobid  = attrs.id | "knob-" + parseInt (Math.random() * 1000);
 		scope.knobtop = elem.find('i');
 		scope.notLess = attrs.notLess || 0;
@@ -98,9 +103,7 @@ newModule.directive('knobKnob', ["$log", function($log) {
 		template: template,
 		scope: {
 			callback   : '=',
-			initvalues : '=',
-			inithook   : '=',  // Hook point to control slider from API
-			cbhandle   : '='  // Argument added to every callback
+			initvalues : '='
 		},
 		restrict: 'E',
 		link: link

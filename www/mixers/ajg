@@ -33,7 +33,8 @@
 
     <!-- Load BZM-RangeSlider JS & CSS -->
 	<link href="../externals/bzm-range-slider.css" rel="stylesheet"/>
-	<script src="../externals/bzm-range-slider.min.js"></script>
+<!--	<script src="../externals/bzm-range-slider.min.js"></script> -->
+	<script src="../sessions/BzmRangeSliderMod.js"></script>
 
 
 	<!-- Load Application CSS -->
@@ -41,14 +42,15 @@
 	<link href="css/scarlett-mixer.css" rel="stylesheet"/>
 
 	<script src="dev/BootMixerApp.js"></script>
+  	<script src="dev/KnobKnobMod.js" /></script>
+	<script src="dev/MasterVolumeMod.js" /></script>
+	<script src="dev/MatrixFaderMod.js"></script>
+	<script src="dev/MatrixLabelMod.js"></script>
+	<script src="dev/MatrixRouteMod.js"></script>
 	<script src="dev/MixerConnectMod.js"></script>
 	<script src="dev/MonitorGatewayMod.js"></script>
-	<script src="dev/MatrixRouteMod.js"></script>
-	<script src="dev/MatrixFaderMod.js"></script>
-	<script src="dev/MasterVolumeMod.js" /></script>
-  	<script src="dev/KnobKnobMod.js" /></script>
    	<script src="dev/PlaybackSwitchMod.js" /></script>
-   	<script src="dev/MatrixLabelMod.js" /></script>
+   	<script src="dev/RegisterNumidCtrlMod.js" /></script>
 
 	<!-- HTML5 Angular Application Base URL-->
 	<base href="/mixers/index.html">

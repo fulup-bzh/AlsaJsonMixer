@@ -1,0 +1,17 @@
+.ajm-stereo-input {
+  padding: 0 !important;
+  margin : 0 0.15rem 0 .15rem !important;
+}
+
+.ajm-scarlett-capture {
+  overflow-y: scroll;
+
+  .ajm-capture-scroll {
+    width: 58rem;
+  }
+
+  .ajm-scroll {
+    width: 58rem !important;
+    padding-right: 1rem;
+  }
+}

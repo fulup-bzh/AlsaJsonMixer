@@ -35,12 +35,9 @@
     margin-bottom: 0.2rem;
   }
 
-  .switch-stereo {
-    display: inline-block;
-  }
-
   .playback-switch {
     padding: .3rem;
+    display: inline-block;
 
     &-button {
       @include shadow-decoration;
@@ -52,6 +49,10 @@
 
     &-button:hover, .button-actif {
       @include hover-background;
+    }
+
+    .button-actif {
+      @include actif-background;
     }
 
     .playback-switch-master {

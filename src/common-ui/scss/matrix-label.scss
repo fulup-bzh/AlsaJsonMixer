@@ -1,0 +1,20 @@
+.ajm-matrix-label {
+  @include label-decoration;
+  display: inline-block;
+  max-width: inherit;
+  width: inherit;
+  text-align: inherit;
+  padding: 0 .3rem 0 .3rem !important;
+}
+
+.ajm-matrix-label.ajg-error {
+  @include label-error;
+}
+
+.ajm-matrix-label.ajg-success {
+  @include label-success;
+}
+
+.ajm-matrix-label:hover {
+  @include label-hover;
+}

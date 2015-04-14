@@ -29,9 +29,9 @@
 
 
 // Lazy Directive Load
-ngapp.addDirective ('scarlettCapture', ["$log",  scarletteCapture]);
+ngapp.addDirective ('scarlettCapture', ["$log", "CtrlByNumid", scarletteCapture]);
 
-function scarletteCapture($log) {
+function scarletteCapture($log, CtrlByNumid) {
 
 
     function link (scope, elem, attrs, model) {
@@ -73,7 +73,7 @@ function scarletteCapture($log) {
             return params;
         };
 
-        scope.ProcessFader = function (channel, input, output) {
+        scope.ProcessFader = function (channel, input, output, mix) {
             var fader = {
 
                 name   : channel.name + " numid="+channel.numid,
@@ -81,7 +81,8 @@ function scarletteCapture($log) {
                     numid  : channel.numid,
                     actif  : channel.actif,
                     idxin  : input,
-                    idxout : output
+                    idxout : output,
+                    mixgrp : mix
                 },
                 ctrl   : { // crtrl sub-obj maps with sliders initialisation API
                     value  : channel.value,
@@ -201,7 +202,7 @@ function scarletteCapture($log) {
                             //console.log ("4: idx=%d jdx=%d kdx=%d zdx=%d", idx, jdx, kdx, zdx);
 
                             // within groups loop on fader lines and build input/output channel index
-                            mixergroup.push(scope.ProcessFader (initvalues.mixes [zdx].volumes[kdx], kdx-jdx, zdx-idx));
+                            mixergroup.push(scope.ProcessFader (initvalues.mixes [zdx].volumes[kdx], kdx-jdx, zdx-idx, idx));
                             //$log.log (" mixergroup.push=", scope.ProcessFader (initvalues.mixes [zdx].volumes[kdx], kdx-jdx, zdx-idx))
                         }
                         fadergroup.push (mixergroup);
@@ -230,25 +231,19 @@ function scarletteCapture($log) {
             $log.log ("matrixMixVolsMix=" , matrixMixVols);
         }; // end init widget
 
-        // export call back
-        scope.MatrixSourcesPoolCB = {
-           take: function (channel, lineIdx) {scope.takeLinePool (scope.matrixSourcesPool, channel, lineIdx)} ,
-           free: function (channel, lineIdx) {scope.freeLinePool (scope.matrixSourcesPool, channel, lineIdx)}
+
+        // A new Mix tab was selected, refresh sliders within this grouptab
+        scope.TabSelected = function (index)  {
+            var groupTab = index* scope.mixerGroup;
+            CtrlByNumid.refreshPool (groupTab);
         };
 
-        // export call back
-        scope.MatrixRoutesPoolCB = {
-           take: function (channel, lineIdx) {scope.takeLinePool (scope.matrixRoutesPool, channel, lineIdx)} ,
-           free: function (channel, lineIdx) {scope.freeLinePool (scope.matrixRoutesPool, channel, lineIdx)}
+        // Pool callback handle get/put operation on line route sources
+        scope.MatrixPoolCB = {
+           take: function (pool, channel, lineIdx) {scope.takeLinePool (pool, channel, lineIdx)} ,
+           free: function (pool, channel, lineIdx) {scope.freeLinePool (pool, channel, lineIdx)}
         };
 
-        // call each time a volume slider moves
-        scope.ActivateCtrlsCB = function (numids, value) {
-
-            $log.log ("scarletteCapture CB numids=%j value=%d", numids, value);
-            scope.callback (numids, [value]); // push request to ScarlettMixerMod values should be an array
-
-        };
 
         scope.mixerGroup = parseInt (attrs.mixerGroup) || 2;
         scope.faderGroup = parseInt (attrs.faderGroup) || 2;

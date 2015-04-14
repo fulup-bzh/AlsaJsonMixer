@@ -1,26 +1,20 @@
 <div class="ajm-scarlett-capture">
-    <div class="row collapse">
-        <div  ng-repeat="matrixRoute in matrixRoutes">
-            <matrix-route route=true callback="MatrixRoutesPoolCB"  initvalues="matrixRoute" ></matrix-route>
-        </div>
+   <div class="ajm-capture-scroll">
+    <div class="ajm-scroll row collapse ">
+       <matrix-route ng-repeat="matrixRoute in matrixRoutes" class="ajm-stereo-input ajm-cell" callback="MatrixPoolCB"  initvalues="matrixRoute" ></matrix-route>
     </div>
 
-    <div id="ajm-matrix-volumes" class="row collapse">
-        <tabset >
+     <div class="ajm-scroll row collapse">
+        <tabset class="ajm-capture-volumes">
             <div  ng-repeat="mixVolume in matrixMixVols">
-                <tab heading="{{mixVolume.name}}" actif="mixVolume.actif">
-                    <div class="row collapse">
-                        <div ng-repeat="volume in mixVolume.mixvol">
-                            <matrix-fader callback="ActivateCtrlsCB" initvalues="volume" ></matrix-fader>
-                        </div>
-                    </div>
+                <tab  heading="{{mixVolume.name}}" actif="mixVolume.actif" select="TabSelected($index)">
+                    <matrix-fader ng-repeat="volume in mixVolume.mixvol" callback="ActivateCtrlsCB" initvalues="volume" ></matrix-fader>
                 </tab>
             </div>
         </tabset>
     </div>
-    <div class="row collapse">
-        <div ng-repeat="matrixSource in matrixSources">
-            <matrix-route source=true callback="MatrixSourcesPoolCB" label="off" initvalues="matrixSource" ></matrix-route>
-        </div>
+    <div class="ajm-scroll row collapse">
+       <matrix-route  ng-repeat="matrixSource in matrixSources" class="ajm-stereo-input ajm-cell" callback="MatrixPoolCB" label="off" initvalues="matrixSource" ></matrix-route>
     </div>
+   </div>
 </div>

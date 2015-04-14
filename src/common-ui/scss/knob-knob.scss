@@ -16,21 +16,41 @@ $knob-occupation: 80%;
 }
 
 
-.knob-button {
+.ajm-knob {
   display: inline-block;
+  width: 100%;
 
-  .matrix-label {
-	@include label-decoration;
+
+  &-title {
+	display: block;
+	text-align: left;
+	width: 90%;
+	>input {
+	  width: 100%;
+	}
+
+	.matrix-label {
+	  width: inherit;
+	}
   }
 
-  .knob-knob {
+  &-value {
+	@include shadow-decoration;
+	margin: .5rem .5rem 0 .5rem;
+	width: 2rem;
+	line-height: 1.2rem;
+	display: inline-block;
+  }
+
+  &-button {
 	width: $knob-size;
 	height: $knob-size;
 	position: relative;
 	float: left;
+  }
 
-	// round button image
-	.top {
+  // round button image
+  &-top {
 	  position: absolute;
 	  margin-left: 15%;
 	  top: 0;
@@ -41,10 +61,10 @@ $knob-occupation: 80%;
 	  background-size: 100% 100%;
 	  z-index: 2;
 	  cursor: default !important;
-	}
+   }
 
-	// round button shadow
-	.base {
+   // round button shadow
+   &-base {
 	  margin-left: 15%;
 	  width: $knob-occupation;
 	  height: $knob-occupation;
@@ -54,10 +74,10 @@ $knob-occupation: 80%;
 	  top: 0;
 	  left: 0;
 	  z-index: 1;
-	}
+   }
 
-	// marker sign on top of knob
-	.top:after {
+   // marker sign on top of knob
+	&-top:after {
 	  content: '';
 	  width: 15%;
 	  height: 15%;
@@ -69,7 +89,7 @@ $knob-occupation: 80%;
 	  cursor: default !important;
 	  box-shadow: 0 0 1px #5a5a5a inset;
 	  z-index: 3;
-	}
+    }
 
 	.bzm-range-slider {
 	  position: absolute;
@@ -94,20 +114,14 @@ $knob-occupation: 80%;
 
 	  .range-slider-handle:hover {
 		@include hover-background;
+		background-color: lawngreen !important;
 	  }
-	}
-  }
-  .knob-value {
-	@include shadow-decoration;
-	display: inline-block;
-	margin: .5rem 0 0 .5rem;
-	line-height: 1.2rem;
-  }
+   }
 }
 
-.knob-knob.button-actif {
+.ajm-knob-button.button-actif {
   @include knob-actif;
 }
-.knob-knob:hover {
+.ajm-knob-button:hover {
   @include knob-actif;
 }

@@ -28,51 +28,61 @@
 
 var newModule = angular.module('ajm-matrix-label', []);
 
+newModule.provider('LabelByUid',  labelByUid);
 
+function labelByUid () {
+    this.labelbyuid = [];
+    var self = this; // I hate JavaScript
 
-newModule.directive('matrixLabel', ["$log", function($log) {
+    // when injecting this provider application receive full object
+    this.$get = function () {return self};
+
+    this.register= function (scope) {
+        if (!scope) return;
+        // console.log ("LabelByUid register uid=%s label=%s", scope.uid, scope.label)
+        this.labelbyuid [scope.uid] = scope;
+    };
+
+    this.setValue= function (uid, label) {
+        if (!uid) return;
+        // if scope is known, just update it, otherwise init tempry one
+        if (this.labelbyuid  [uid] && this.labelbyuid [uid].setValue) this.labelbyuid [uid].setValue(label);
+        else this.labelbyuid [uid] = {uid: uid, label: label}; // fake scope waiting for real one
+    };
+
+    // return complete pool as an array for session saving
+    this.getPool = function () {
+        var response = [];
+        var pool =  this.labelbyuid;
+        Object.keys(this.labelbyuid).forEach(function(uid, idx) {
+            var record = pool[uid];
+            response.push ({uid: record.uid, label: record.label});
+        });
+        return response;
+    };
+
+    // get label value from UID
+    this.getValue= function (uid) {
+        // if uid is registered return label
+        if (this.labelbyuid[uid]) return (this.labelbyuid [uid].label);
+        return undefined;
+    };
+
+    // get label value from UID
+    this.reset= function () {
+        var pool =  this.labelbyuid;
+        Object.keys(this.labelbyuid).forEach(function(uid, idx) {
+            if (pool[uid] && pool[uid].setValue) pool [uid].setValue (undefined);
+        });
+    }
+}
+
+newModule.directive('matrixLabel', ["$log", 'LabelByUid', function($log, LabelByUid) {
 
     // warning template is not clean because of ng-moddel-options blur option.
-    var template = '<input type="text" class="matrix-label" ng-model="label" ng-model-options="{ updateOn: ' + "'blur'" +' }">' ;
+    var ngoptions = "{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }";
+    var template = '<input type="text" class="ajm-matrix-label" ng-model="label" list={{list}} placeholder={{placeholder}} ng-model-options="' + ngoptions + '">' ;
 
-    // pool is share within all instances of matrix-label
-    function pool() {
-        this.labelbyuid = [];
-
-        this.register= function (scope) {
-            if (!scope) return;
-            this.labelbyuid [scope.uid] = scope;
-        };
-
-        this.setValue= function (uid, label) {
-            if (!uid) return;
-            // if scope is known, just update it, otherwise init tempry one
-            if (this.labelbyuid  [uid]) this.labelbyuid [uid].setValue (label);
-            else this.labelbyuid [uid] = {uid: uid, label: label};
-        };
-        
-        // return complete pool as an array for session saving
-        this.getPool = function () {
-            var response = [];
-            var pool =  this.labelbyuid;
-            Object.keys(this.labelbyuid).forEach(function(uid, idx) {
-                var record = pool[uid];
-                response.push ({uid: record.uid, label: record.label});
-            });
-
-            return response;
-        };
-
-        // get label value from UID 
-        this.getValue= function (uid) {
-            // if uid is registered return label
-            if (this.labelbyuid[uid]) return (this.labelbyuid [uid].label);
-            return undefined;
-        }
-    }
-
-    // instanciate pool only once on load
-    var sharedpool= new pool();
 
     function link (scope, element, attrs, model) {
 
@@ -84,26 +94,37 @@ newModule.directive('matrixLabel', ["$log", function($log) {
         scope.initWidget = function () {
            if (!scope.initvalues) return;
 
-           console.log ("initvalues =%j", scope.initvalues)
+           // handle default attrs
+           scope.list = attrs.list;
+           scope.placeholder = attrs.placeholder;
+
+           // console.log ("initvalues =%j", scope.initvalues)
            scope.uid   = scope.initvalues.uid;
-           scope.label = sharedpool.getValue (scope.uid) || scope.initvalues.label;
-           sharedpool.register (scope);
+
+           // initialise label from attribute or session content
+           scope.label = LabelByUid.getValue (scope.uid) || scope.initvalues.label;
+
+           LabelByUid.register (scope);
         };
 
-        // if a labelpool is provided extract value and return handle
-        if (scope.labelpool) scope.labelpool= sharedpool;
+        // if we have a callback let's watch for value change
+        if (scope.callback) scope.$watch ('label', function(){
+            scope.callback (scope.label, element);
+        });
 
         // initialize widget now or later
-        scope.initWidget ();
-        scope.$watch ('initvalues', scope.initWidget);
+        scope.initWidget();
+        scope.$watch ('initvalues', scope.initWidget); // cb no params
+
     }
 
     return {
     template: template,
     scope: {
-        labelpool  : '=',
         initvalues : '=',
-        label : '='
+        label      : '=',
+        used       : '=',
+        callback   : '='
     },
     restrict: 'E',
     link: link

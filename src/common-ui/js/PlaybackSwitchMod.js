@@ -12,13 +12,13 @@
 
 var newModule = angular.module('ajm-playback-switch', []);
 
-newModule.directive('playbackSwitch', ["$log", function($log, $timeout) {
+newModule.directive('playbackSwitch', ["$log", "CtrlByNumid", function($log, CtrlByNumid) {
 
 	var template = '<div class="playback-switch" title="{{switch.name}}"> '
 		         + '  <span ng-repeat="count in indexes" ng-click="toggleState($event, $index)" class="playback-switch-button {{extraclass}}">{{count}}</span>'
 		         + '</div>';
 
-	var globalcount = 1;
+    var globalcount = 0;
 
 	function link(scope, elem, attrs, model) {
 
@@ -31,20 +31,37 @@ newModule.directive('playbackSwitch', ["$log", function($log, $timeout) {
 			// $log.log ("playback-switch init=", initvalues);
 
 			// ng-repeat refuse to loop on boolean data !!!
+
 			for (idx = 0; idx < initvalues.value.length; idx++ ) {
 				indexes.push (globalcount++);
-
 			}
 
 			// update UI and save initvalues
 			scope.indexes = indexes;
             scope.switch = initvalues;
 
+			// register switch numid within global pool for session load/store
+			CtrlByNumid.register (initvalues.numid, scope);
+
 
 			// master switch is the only one that is not stereo
             if (idx === 1) scope.extraclass="playback-switch-master";
 			else scope.extraclass="";
+		};
 
+		// this method is used when doing a session restore
+		var domelem = elem.find ('span');
+		scope.setValue = function (newvalue) {
+			var value = scope.switch.value;
+			var domelem = elem.find("span");
+			for (var idx = 0; idx < value.length; idx++ ) {
+				value [idx] = newvalue [idx];
+				if (value [idx]) domelem.addClass ('button-actif');
+				else  domelem.removeClass ('button-actif');
+				// $log.log ("span added actif class", domelem)
+
+				domelem = domelem.next();
+			}
 		};
 
 
@@ -67,6 +84,8 @@ newModule.directive('playbackSwitch', ["$log", function($log, $timeout) {
 
 
 		// initialize widget
+		if (attrs.first === 'true') globalcount = 1;
+
   		scope.switchid  = attrs.id | "switch-" + parseInt (Math.random() * 1000);
 		scope.$watch ('initvalues', function () { 	// init Values may arrive late
 			if (scope.initvalues) scope.initWidget(scope.initvalues);

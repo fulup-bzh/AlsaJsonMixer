@@ -60,39 +60,50 @@
 
   &-title {
     width: 100%;
+    display: inline-block;
     .sndcard-name {
       display: inline-block;
       font-size: 1rem;
       font-style: italic;
     }
 
-    .sesssion-name > .matrix-label {
-      @include label-decoration;
-      max-width: 20rem;
-      display: inline-block;
-      text-align: right;
+    .ajm-session-name.ajg-error > input{
+      @include label-error;
     }
 
-    .session-save {
-      margin: 0 0 0 .5rem;
-      font-size: 1.5rem;
-      line-height: 1.5rem;
+    .ajm-session-name.ajg-success > input{
+      @include label-success;
     }
-    .session-save:hover {
+
+
+    .ajm-session-name {
+      max-width: 15rem;
+      text-align: right;
+      display: inline-block;
+
+    }
+    .ajm-session-info {
+      max-width: 35rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    .ajm-session-save {
+      margin: 0 .5rem 0 .5rem;
+      font-size: 1.3rem;
+      line-height: 1.3rem;
+    }
+
+    .ajm-session-save:hover, .session-refresh:hover, .sndcard-name:hover {
       @include hover-background;
       color: rgb(255, 51, 153);
     }
 
-    .sndcard-status {
+
+    .ajm-sndcard-status {
       width: auto;
       float: right;
     }
   }
 
-  // did not found out why ajm-matrix-volumes is 1.5rem too big !!!
-  #ajm-matrix-volumes {
-    margin-bottom: -1.5rem;
-  }
-
 }
-

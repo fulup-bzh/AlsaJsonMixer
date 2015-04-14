@@ -24,17 +24,22 @@
 */
 
 
-.ajm-stereo-input {
+.ajm-matrix-route {
   @include widget-decoration;
-  //width: inherit;
+  width: 100%;
 
   // Label is an input zone we need to overwrite Foundation defaults
-  &-linein, .matrix-label  {
+  .ajm-matrix-label  {
    @include label-decoration;
+   text-align: center;
   }
 
-  &-input-name:hover {
+  .ajm-route-label:hover {
     @include hover-background;
+  }
+
+  select {
+    @include label-decoration;
   }
 
   .ajm-select-0 > select {

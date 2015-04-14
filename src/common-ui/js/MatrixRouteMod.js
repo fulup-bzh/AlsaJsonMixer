@@ -32,7 +32,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
 
     var optionTemplate = document.createElement('option');
     // do not use ng-model in select as it break initial value setting
-    var template = '<select title="{{channel.name}}" title={{channel.name}} class="ajm-stereo-input-linein" ng-click="selected()"></select>';
+    var template = '<select title="{{channel.name}}" title={{channel.name}} ng-click="selected()"></select>';
 
     function addOption(linein, parent) {
 
@@ -53,6 +53,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
         // call when internal model value changes
         scope.initWidget = function (initvalues) {
 
+            if (scope.initvalues.numid > 200) $log.log ("**** scope.initWidget initvalues=", initvalues)
             scope.channel   = initvalues;
             scope.selection = initvalues.value;
             scope.selectElem.value = initvalues.value;
@@ -60,7 +61,6 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
 
         // we need to wait for matrixLinesPool to be ready before building selection list
         scope.$watch ('matrixLinesPool', function () {
-            // default value is off
 
             // select is first child in template, remove 1st empty option
             var parent = element[0].firstChild; // get select
@@ -71,7 +71,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
                 if (scope.matrixLinesPool[idx].used) {
                     option.disabled = true;
                 } else  if (scope.channel && scope.channel.value === idx) {
-                    scope.callback (scope.channel, idx, true);
+                    scope.callback (scope.matrixLinesPool, scope.channel, idx, true);
                     option.selected = true;
                 }
             }
@@ -89,12 +89,12 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
                 scope.selection = scope.channel.value;
                 return;
             }
-            scope.callback (scope.channel, scope.selection);
+            scope.callback (scope.matrixLinesPool, scope.channel, scope.selection);
         };
 
-        scope.$watch ('initvalues', function () { 	// init Values may arrive late
-            if (scope.initvalues) scope.initWidget(scope.initvalues);
-        });
+        // depending on the case initvalues may be ready before or after DOM/directive component
+        if (scope.initvalues) scope.initWidget(scope.initvalues);
+
     }
 
     return {
@@ -114,12 +114,11 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
 newModule.directive('matrixRoute', ["$log", function($log) {
 
     var template
-   = '<div class="small-1 columns ajm-stereo-input">'
-   + '<matrix-label ng-show="source" class="ajm-stereo-input-linein" initvalues="info"></matrix-label>'
-   + '<div class="ajm-matrix-volume-fader" ng-repeat="line in MatrixLines">'
-   + '<line-input class="ajm-select-{{$index}}"  matrix-lines-pool="matrixLinesPool" initvalues="line" callback="selected"></line-input>'
+   = '<div class="ajm-matrix-route">'
+   + '<matrix-label class="ajm-route-label" initvalues="info"></matrix-label>'
+   + '<div class="ajm-route-select" ng-repeat="line in MatrixLines">'
+   + '<line-input class="ajm-route-linein ajm-select-{{$index}}"  matrix-lines-pool="matrixLinesPool" initvalues="line" callback="selected"></line-input>'
    + '</div>'
-   + '<matrix-label ng-show="route" class="ajm-stereo-input-linein" initvalues="info"></matrix-label>'
    + '</div>';
 
     function link (scope, element, attrs, model) {
@@ -143,13 +142,14 @@ newModule.directive('matrixRoute', ["$log", function($log) {
             }
         };
 
-        scope.selected = function (channel, selection, initphase) {
+        scope.selected = function (pool, channel, selection, initphase) {
             // ignore initial empty events
             if (!channel) return;
 
             // free channel 1st in case same one was reselected
-            if (!initphase) scope.callback.free (channel, selection);
-            scope.callback.take (channel, selection);
+            if (!initphase) scope.callback.free (pool, channel, selection);
+
+            scope.callback.take (pool, channel, selection);
             channel.value = selection;
         };
 
@@ -157,10 +157,12 @@ newModule.directive('matrixRoute', ["$log", function($log) {
             scope.inputid  = attrs.id     || "matrix-" + parseInt (Math.random() * 1000);
             scope.name     = attrs.name   || "NoName";
             scope.label    = attrs.label  || "NoLabel";
-            scope.route    = attrs.route  || false;
-            scope.source   = attrs.source || false;
 
+            // Warning initvalue might be ready after Directive display
             if (scope.initvalues) scope.initWidget (scope.initvalues);
+            scope.$watch ('initvalues', function () { 	// init Values may arrive late
+                if (scope.initvalues) scope.initWidget(scope.initvalues);
+            });
         };
 
         scope.init();

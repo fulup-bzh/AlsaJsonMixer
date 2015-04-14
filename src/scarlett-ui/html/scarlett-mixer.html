@@ -2,18 +2,29 @@
 <div class="ajm-scarlett" >
 	<div class="row collapse">
 		<div class="ajm-scarlett-title">
-			<i class="sndcard-name" title="{{Scarlett.sndcard.info}}">{{Scarlett.sndcard.name}}</i>
-			<matrix-label id="session" class="sesssion-name" title="Gateway Session Name" initvalues="Scarlett.SessionLabelName" labelpool="Scarlett.SessionLabelPool"></matrix-label>
-			<i class="session-save fa fa-floppy-o" ng-click="Scarlett.SessionSave()"></i>
-			<monitor-status class="sndcard-status"></monitor-status>
+
+			<matrix-label class="ajm-session-name" list="sessions-list" placeholder="select session name" title="AJG Session Name"
+						  callback="Scarlett.SessionLoad" initvalues="Scarlett.SessionLabelName" labelpool="Scarlett.SessionLabelPool"></matrix-label>
+			<i class="ajm-session-refresh fa fa-refresh" ng-click="Scarlett.GetSessionsList(1)"></i>
+
+			<datalist id="sessions-list" >
+				<option data-ng-repeat="item in Scarlett.SessionsList" value="{{item.session}}" label="{{item.session + ' (' + item.date +')'}}">
+			</datalist>
+
+			<matrix-label class="ajm-session-info show-for-large-up " title="Gateway Session Info" placeholder="Misc information about session" initvalues="Scarlett.SessionLabelInfo"></matrix-label>
+			<i class="ajm-session-save fa fa-floppy-o" ng-click="Scarlett.SessionStore()"></i>
+			<i class="ajm-sndcard-name" title="{{Scarlett.sndcard.info}}" ng-click="Scarlett.GetSessionsList(2)">{{Scarlett.sndcard.name}}</i>
+
+			<monitor-status class="ajm-sndcard-status"></monitor-status>
   	    </div>
 	</div>
 	<div class="row collapse">
-		<div class="small-9 columns">
-			<scarlett-capture initvalues="Scarlett.alsamixer" callback="Scarlett.SendAlsaCtrlsCB" />
+		<div class="small-8 columns">
+			<scarlett-capture initvalues="Scarlett.alsamixer" callback="Scarlett.SendAlsaCtrlsCB" ></scarlett-capture>
 		</div>
-		<div class="small-2 columns left">
-			<scarlett-master initvalues="Scarlett.alsamaster" callback="Scarlett.SendAlsaCtrlsCB" />
+
+		<div class="small-4 columns left">
+			<scarlett-master initvalues="Scarlett.alsamaster" syncstatus="BoardSyncStatus" callback="Scarlett.SendAlsaCtrlsCB" ></scarlett-master>
 		</div>
 	</div>
 </div>

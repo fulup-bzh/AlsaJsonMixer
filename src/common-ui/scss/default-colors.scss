@@ -23,7 +23,7 @@
    $Id: $
 */
 
-$hover-color :  rgba(255, 153, 255, .7);
+$hover-color :  rgba(204, 204, 255, .6);
 $actif-color:  rgba(255, 153, 255, .5);
 $text-color  :   darkslateblue;
 
@@ -58,9 +58,10 @@ $text-color  :   darkslateblue;
 
 @mixin widget-decoration {
   padding: .2rem;
-  margin: .4rem;
+  margin: .2rem;
   border-color: rgba(150, 150, 150, 0.6);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(100, 100, 200, 0.6) !important;
+  border-radius: 5px;
 }
 
 @mixin box-decoration {
@@ -73,7 +74,7 @@ $text-color  :   darkslateblue;
 @mixin label-decoration {
   display: block;
   width: 100%;
-  text-align: center;
+  text-align:inherit;
   margin: .3rem 0 .3rem 0 !important;
   font-size: .75rem !important;;
   height: 1.5rem !important;
@@ -81,4 +82,76 @@ $text-color  :   darkslateblue;
   border-radius: 5px;
   color: #191970 !important;
   background-color: rgba(230, 230, 230, .7) !important;
+}
+
+
+@mixin label-error {
+  border-color: rgba(154, 17, 69, 0.6);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(154, 17, 69, 0.6);
+  color: rgb(154, 17, 69);
+  @extend %shadow-transition;
+  //margin: 0 0 .2rem;
+}
+
+@mixin label-success {
+  border-color: rgba(154, 205, 50, 0.6)!important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(154, 205, 50, 0.6)!important;
+  @extend .shadow-transition;
+}
+
+@mixin label-hover {
+  border-color: rgba(82,168,236,0.8) ;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82,168,236,0.8) !important;
+  color: darkslateblue !important;
+  @extend %shadow-transition;
+}
+
+
+.ajm-table {
+   display: table;
+}
+
+.ajm-cell {
+  display: table-cell;
+  //width: 10%;
+}
+
+
+.ajm-reset {
+ display: block;
+ width: 100%;
+}
+
+.ajm-row {
+  display: table-row;
+  width: 100%;
+}
+
+.ajm-tab {
+  display: table;
+  width: 100%;
+}
+
+.ajm-green {
+  background-color: #00ac4d;
+
+}
+
+.ajm-pink {
+  background-color: hotpink;
+}
+
+.tabbable {
+  width : 100% !important;
+//   background-color: #008B8B;
+
+  .tabs {
+    widows: inherit;
+    > div {
+      display: inline-block;
+    }
+  }
+  .tabs-contents {
+    width: inherit;
+  }
 }

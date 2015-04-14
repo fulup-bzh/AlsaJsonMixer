@@ -28,6 +28,11 @@ $actif-color:  rgba(255, 153, 255, .4);
 $text-color  :   darkslateblue;
 
 
+%shadow-transition {
+  transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+
+
 // some usefull macros
 @mixin hover-background {
   background-color: $hover-color !important;
@@ -60,4 +65,26 @@ $text-color  :   darkslateblue;
   border-radius: 5px;
   color: #191970 !important;
   background-color: rgba(230, 230, 230, .7) !important;
+}
+
+
+@mixin label-error {
+  border-color: rgba(154, 17, 69, 0.6);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(154, 17, 69, 0.6);
+  color: rgb(154, 17, 69);
+  @extend %shadow-transition;
+  //margin: 0 0 .2rem;
+}
+
+@mixin label-success {
+  border-color: rgba(154, 205, 50, 0.6)!important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(154, 205, 50, 0.6)!important;
+  @extend .shadow-transition;
+}
+
+@mixin label-hover {
+  border-color: rgba(82,168,236,0.8) ;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82,168,236,0.8) !important;
+  color: darkslateblue !important;
+  @extend %shadow-transition;
 }

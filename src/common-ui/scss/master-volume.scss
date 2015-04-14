@@ -23,35 +23,28 @@
 */
 
 
-.master-volume-zone {
+.ajm-master-volume {
    display: block;
    @include box-decoration;
    padding: 0 0 .8rem .5rem;
    margin-bottom: 0.5rem;
 
-   .volume-title {
+   .ajm-volume-title {
       padding: 0 0 0 .5rem;
       margin-bottom: 0.2rem;
    }
 
-   .master-volume-knob {
+   .ajm-volume-knob {
       display: inline-block;
-      padding: .2rem;
-      width: 50%;
+      margin-right: .5rem;
+      width: 45%;
    }
 
-   .master-volume-knob.valuecount-1 {
+   .ajm-volume-knob.valuecount-1 {
       width: 100%;
-      .knob-knob {
-         width:  6rem;
+      .ajm-knob-button {
+         width: 6rem;
          height: 6rem;
-      }
-
-      .knob-value {
-         @include shadow-decoration;
-         display: inline-block;
-         margin: .5rem 0 0 .5rem;
-         line-height: 1.2rem;
       }
    }
 }

@@ -28,8 +28,7 @@
 
 var newModule = angular.module('ajm-matrix-fader', []);
 
-newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout) {
-
+newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function($log, $timeout, CtrlByNumid) {
 
     function link (scope, element, attrs, model) {
 
@@ -39,7 +38,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
         scope.initWidget = function(initvalues) {
 
             if (!initvalues) return; // make sure we have some data to work with
-            //$log.log ("matrixFader initvalues=", initvalues)
+            // $log.log ("matrixFader initvalues=", initvalues)
 
             // we use left mix as reference and compute right mix from balance level
             var refMix =  initvalues[0];
@@ -47,12 +46,6 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
 
             // check if mixes are groupe in stereo
             if (refMix[0].length  == 2) scope.stereo = true;
-
-            scope.BalanceModel = {
-                    value: 0,
-                    notMore: range / 2,
-                    notLess: -1 * range / 2
-            };
 
             // attach model to actif sliders and keep a local copy as MixerModel will be erase
             scope.MixerModel  = initvalues;
@@ -126,6 +119,8 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
             // buid a list and an associative array of controls
             scope.sliderById [handle.numid] = slider;
 
+            // register Numid Control in central register for session upload
+            CtrlByNumid.register (handle.numid, slider);
         };
 
         // formatter CB are call when a slide move, then should return value presented in handle
@@ -137,8 +132,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
 
             // if capture are in sync let's move all channels together
             if (scope.prefad.PFLM) {
-
-                // loop on associative array to check which slide should be unsync
+                // loop on associative array to check which slider should be unsync
                 Object.keys(scope.sliderById).forEach(function(key, idx) {
                     var handle =  scope.sliderById[key].getCbHandle();
                     var slider =  scope.sliderById[key];
@@ -163,10 +157,39 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
 
             // send value to every concerned channel control numid
             // console.log ("numids=%j value=%d", targets, value)
-            scope.callback (targets, value);
+            if (!scope.ismuted) scope.callback (targets, value);
 
             // return value displays within handle
             return (value);
+        };
+
+
+        scope.ToggleMute = function (channel, muted) {
+
+            if (muted) {
+                scope.ismuted = true;
+                var targets = []; // update all channel NumId in one call
+                // Get Numids Attach to this slider and mute them
+                Object.keys(scope.sliderById).forEach(function (key, idx) {
+                    var handle = scope.sliderById[key].getCbHandle();
+                    if (channel == handle.idxin) targets.push(handle.numid);
+                }, scope.sliderById);
+
+                // Mute channel
+                scope.callback (targets, 0);
+            } else {
+                scope.ismuted = false;
+
+                // Restore previous values sending back original values to sndcard
+                Object.keys(scope.sliderById).forEach(function (key, idx) {
+                    var handle = scope.sliderById[key].getCbHandle();
+                    if (channel == handle.idxin) {
+                        var slider = scope.sliderById[key];
+                        var value = slider.getValue(value);
+                        scope.callback([handle.numid], value);
+                    }
+                }, scope.sliderById);
+            }
         };
 
 
@@ -178,39 +201,23 @@ newModule.directive('matrixFader', ["$log", '$timeout', function($log, $timeout)
            if (scope.prefad [action]) {
                scope.prefad [action] = false;
                button.removeClass ("pfl-button-actif")
+
+               if (action == 'MUTL') scope.ToggleMute (0, false);
+               if (action == 'MUTR') scope.ToggleMute (1, false);
            } else {
                scope.prefad [action] = true;
                button.addClass ("pfl-button-actif")
+               if (action == 'MUTL') scope.ToggleMute (0, true);
+               if (action == 'MUTR') scope.ToggleMute (1, true);
            }
         };
 
-        scope.knobResetCB = function() {
-            scope.rightBalanceModel =  scope.leftBalanceModel  = {value : 0};
-            scope.rightBalanceModel =  scope.leftBalanceModel  = {value : 0};
-            if (scope.actifKnob)  {
-                scope.actifKnob.toggleState();
-                scope.actifKnob = null;
-                scope.sliderBalanceModel= {disabled: true };
-            }
-        };
-
-        scope.knobToggleCB = function (button) {
-            if (button.toggleState()) {
-                if (scope.actifKnob) scope.actifKnob.toggleState();
-                scope.actifKnob = button;
-                scope.sliderBalanceModel= {disabled: false, value: button.value};
-            }
-            else {
-                scope.sliderBalanceModel= {disabled: true };
-                scope.actifKnob = false;
-            }
-        };
 
         // initialize widget
         scope.inputid  = attrs.id    || "analog-in-" + parseInt (Math.random() * 1000);
         scope.name     = attrs.name  || "NoName";
         scope.label    = attrs.label || "NoLabel";
-        scope.switchid  = attrs.id | "switch-" + parseInt (Math.random() * 1000);
+        scope.switchid = attrs.id | "switch-" + parseInt (Math.random() * 1000);
         scope.$watch ('initvalues', function () { 	// init Values may arrive late
             if (scope.initvalues) scope.initWidget(scope.initvalues);
         });

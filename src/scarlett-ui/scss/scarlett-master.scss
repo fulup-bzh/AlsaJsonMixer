@@ -1,0 +1,61 @@
+
+.ajm-scarlett-master {
+ background-color: pink !important;
+
+  .playback-source {
+    display: block;
+
+    .ajm-matrix-route {
+      display: inline-block;
+      width: 100%;
+      >input {
+        width: inherit;
+      }
+    }
+
+    .ajm-route-label {
+      display: inline-block;
+      width: 67%;
+    }
+
+    .ajm-route-select {
+      float: right;
+      width: 30%;
+      display: inline-block;
+    }
+  }
+
+  .playback-source.playback-select {
+    .ajm-route-label,.ajm-route-select {
+      width: 100%;
+      display: block;
+      >select text-align: center;
+    }
+  }
+
+  &-input-name:hover {
+    @include hover-background;
+  }
+
+  .playback-switch-table,.playback-source{
+    width: 100%;
+  }
+
+  .ajm-sync-status {
+    @include label-decoration;
+    line-height: 1.5rem;
+    margin: .2rem .7rem .3rem .2rem !important;
+    display: block;
+    width: 100%;
+  }
+
+  .ajm-status-success {
+    @include label-success;
+  }
+
+  .ajm-status-error {
+    @include label-error;
+  }
+
+}
+

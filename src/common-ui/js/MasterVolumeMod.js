@@ -29,12 +29,13 @@
 var newModule = angular.module('ajm-master-volume', []);
 
 // http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
-newModule.directive ('masterVolume', ["$log", ajgMasterVolume]);
+newModule.directive ('masterVolume', ["$log",  ajgMasterVolume]);
 function ajgMasterVolume ($log) {
 
-    var template = '<div class="master-volume"> '
-        + '<knob-knob ng-repeat="volume in volumes"  title="{{volume.name}}" cbhandle="volume.channel" callback="setValue" '
-        + '  class="master-volume-knob valuecount-{{volume.channel.count}}" initvalues="volume.ctrl"></knob-knob>'
+    var template = '<div class="ajm-master-volume"> '
+        + '<p class="ajm-volume-title">"{{panelTitle}}"</p>'
+        + '<knob-knob ng-repeat="volume in volumes"  title="{{volume.channel.name}}" callback="callback" '
+        + '  class="ajm-volume-knob valuecount-{{volume.channel.count}}" initvalues="volume"></knob-knob>'
         + '</div>';
 
     function link (scope, elem, attrs) {
@@ -43,24 +44,10 @@ function ajgMasterVolume ($log) {
         scope.initWidget = function (initvalues) {
 
             if (initvalues === undefined) return;
-           // $log.log("master-volume init=", initvalues);
+            // $log.log("master-volume init=", initvalues);
 
+            if (initvalues.numid > 200) $log.log("master-volume init=", initvalues);
             scope.volumes = initvalues;
-
-        };
-
-        scope.setValue = function (value, handle) {
-            var values = [];
-            if (!handle) return;
-
-            $log.log ("Master Volume value=%s", value, 'handle=', handle);
-
-            // balance equalisation not implemented
-            for (var idx=0; idx < handle.count; idx++) values.push (value);
-
-            // send back control to alsa gateway
-            scope.callback (handle.numid, values);
-
         };
 
         // initialize widget
@@ -68,6 +55,8 @@ function ajgMasterVolume ($log) {
         scope.$watch('initvalues', function () { 	// init Values may arrive late
             if (scope.initvalues) scope.initWidget(scope.initvalues);
         });
+
+        scope.panelTitle = attrs.panelTitle || "Volumes";
     }
     return {
         template: template,

@@ -37,7 +37,7 @@ $range-slider-width: .60rem !important;
   }
 
   &-display:hover {
-   @include hover-background;
+   @include actif-background;
   }
 }
 
@@ -74,8 +74,10 @@ $range-slider-width: .60rem !important;
   border-radius: 5px;
 }
 
-.ajm-matrix-volume {
+.ajm-matrix-fader {
   @include widget-decoration;
+  display: inline-block;
+  width: 5.5rem;
 
   // Label is an input zone we need to overwrite Foundation defaults
   &-input-name {
