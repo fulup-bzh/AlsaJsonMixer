@@ -54,6 +54,13 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
         // process json response from alsa-gateway
         handler.success(function(response, errcode, headers, config) {
 
+            // process standard AJG error messages
+            if (response.ajgtype === "AJG_message") {
+                if (response.status == 'empty') Notification.warning ({message: response.info, delay: 5000});
+                else Notification.error ({message: response.info, delay: 5000});
+                return;
+            }
+
             // verify response is a valid "AJG_sessions",
             if (response.ajgtype != "AJG_sessions") {
                 alert("AJM:FAIL ScarlettMixerController not a AJG_sessions record sndcard=" + scope.cardid + ", response=" + JSON.stringify(response));
