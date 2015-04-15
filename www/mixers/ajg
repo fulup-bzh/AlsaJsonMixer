@@ -48,7 +48,6 @@
 
 </head>
 <body  ng-app="mixer-ui-app">
-<h3>Alsa Json Gateway Client</h3>
 <div class="row collapse ajm-global-panel">
      <div ng-view></div>
 </div>
