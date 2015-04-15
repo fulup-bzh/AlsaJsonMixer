@@ -1,0 +1,45 @@
+<div class="ajm-matrix-fader">
+
+    <div class="row collapse">
+        <div ng-repeat="VolumeGroup in MixerModel">
+            <div class="ajm-matrix-fader-channel left">
+                <div class="ajm-matrix-fader-fader" ng-repeat="faderline in VolumeGroup">
+                <range-slider vertical="true" class="radius " title="{{faderline.name}}" formatter="FaderSliderCB" callback="FaderSliderCB" inithook="SliderInit"
+                              initvalues="faderline.ctrl" cbhandle="faderline.channel" disable="{{$index !== 0}}" display-target="handle"></range-slider>
+                </div>
+                <span ng-click="StereoMix($event,$index)" class="ajm-matrix-fader-button pfl-mono pfl-button-actif">&infin;</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row collapse">
+        <div class="ajm-matrix-fader-buttons-panel">
+            <div class="row collapse">
+                <div class="small-4 columns">
+                    <span ng-click="PreFader($event,'PFLL')" class="ajm-matrix-fader-button pre-fader-listen">PFL</span>
+                </div>
+                <div class="small-4 columns">
+                    <span ng-click="PreFader($event,'PFLM')" class="ajm-matrix-fader-button pfl-mono">&infin;</span>
+                </div>
+                <div class="small-4 columns">
+                    <span ng-click="PreFader($event,'PFLR')" class="ajm-matrix-fader-button pre-fader-listen pfl-right">PFL</span>
+                </div>
+            </div>
+            <div class="row collapse">
+                <div class="small-3 columns">
+                    <span ng-click="PreFader($event,'MUTL')" class="ajm-matrix-fader-button mute-solo-listen">M</span>
+                </div>
+                <div class="small-3 columns">
+                    <span ng-click="PreFader($event,'SOLL')" class="ajm-matrix-fader-button mute-solo-listen">S</span>
+                </div>
+                <div class="small-3 columns">
+                    <span ng-click="PreFader($event,'MUTR')" class="ajm-matrix-fader-button mute-solo-listen">M</span>
+                </div>
+                <div class="small-3 columns">
+                    <span ng-click="PreFader($event,'SOLR')" class="ajm-matrix-fader-button mute-solo-listen">S</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

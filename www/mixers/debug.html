@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="Author" content="Fulup Ar Foll">
+	<meta name="Object" content="Entry Page for ALSA-JSON-GATEWAY client UI">
+	<Title>ajm-Alsa-Mixer</Title>
+
+    <script>
+		/*Protect us from IE unwanted no-console feature */
+		if(!window.console) {console={log: function(){} }}
+	</script>
+
+	<!-- Load Foundation CSS -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.2.0/css/foundation.min.css" rel="stylesheet"/>
+
+	<!-- Load Awesome Fonts CSS -->
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+	<!-- Load Angular JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-beta.6/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-beta.6/angular-route.min.js"></script>
+
+    <!-- Angular for foundation -->
+   	<script src="../externals/mm-foundation-tpls.min.js"></script>
+
+	<!-- Asynchronous load of JS file [$script] -->
+	<script src="../externals/script.min.js"></script>
+
+	<script src="../externals/angular-ui-notification.min.js"></script>
+	<link  href="../externals/angular-ui-notification.min.css" rel="stylesheet"/>
+
+    <!-- Load BZM-RangeSlider JS & CSS -->
+	<link href="../externals/bzm-range-slider.css" rel="stylesheet"/>
+<!--	<script src="../externals/bzm-range-slider.min.js"></script> -->
+	<script src="../sessions/BzmRangeSliderMod.js"></script>
+
+	<!-- Load Application CSS -->
+	<link href="css/common-mixer.css"   rel="stylesheet"/>
+	<link href="css/scarlett-mixer.css" rel="stylesheet"/>
+
+	<script>AJG_GLOBAL_DEBUG=true</script>
+
+	<script src="dev/BootMixerApp.js"></script>
+  	<script src="dev/KnobKnobMod.js" /></script>
+	<script src="dev/MasterVolumeMod.js" /></script>
+	<script src="dev/MatrixFaderMod.js"></script>
+	<script src="dev/MatrixLabelMod.js"></script>
+	<script src="dev/MatrixRouteMod.js"></script>
+	<script src="dev/MixerConnectMod.js"></script>
+	<script src="dev/MonitorGatewayMod.js"></script>
+   	<script src="dev/PlaybackSwitchMod.js" /></script>
+   	<script src="dev/RegisterNumidCtrlMod.js" /></script>
+
+	<!-- HTML5 Angular Application Base URL-->
+	<base href="/mixers/index.html">
+
+</head>
+<body  ng-app="mixer-ui-app">
+<h3>Alsa Json Gateway Client</h3>
+<div class="row collapse ajm-global-panel">
+     <div ng-view></div>
+</div>
+
+</body>
+</html>

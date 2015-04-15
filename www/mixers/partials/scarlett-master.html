@@ -1,0 +1,46 @@
+<div class="ajm-scarlett-master">
+
+  <div class="small-8 columns">
+     <div class="row collapse">
+        <master-volume initvalues="volumes" panel-title="Playback Master Volume" callback="ActivateCtrlsCB" ></master-volume>
+     </div>
+      <div class="row collapse">
+          <div  class="playback-switch-table">
+              <p class="switch-title">Master Playback Route</p>
+              <matrix-route ng-repeat="playbackRoute in playSources" class="playback-source" initvalues="playbackRoute"  callback="MatrixPoolCB" ></matrix-route>
+          </div>
+      </div>
+  </div>
+
+  <div class="small-4 columns">
+      <div class="row collapse master-bottom-switch-zone">
+          <div class="playback-switch-table">
+              <p class="switch-title">Playback Switch</p>
+              <playback-switch ng-repeat="playbackSwitch in switches.master" first="{{$first}}" class="switch-stereo" initvalues="playbackSwitch"  callback="ActivateCtrlsCB" ></playback-switch>
+          </div>
+      </div>
+     <div class="row collapse master-bottom-switch-zone">
+        <div class="playback-switch-table">
+            <p class="switch-title">Pad Switch</p>
+            <playback-switch ng-repeat="playbackSwitch in switches.pad" first="{{$first}}" class="switch-stereo" initvalues="playbackSwitch"  callback="ActivateCtrlsCB" ></playback-switch>
+        </div>
+     </div>
+      <div class="row collapse master-bottom-switch-zone">
+          <div  class="playback-switch-table">
+              <p class="switch-title">Impedance Switch</p>
+              <playback-switch ng-repeat="playbackSwitch in switches.impedance" first="{{$first}}" class="switch-stereo" initvalues="playbackSwitch"  callback="ActivateCtrlsCB" ></playback-switch>
+          </div>
+      </div>
+      <div class="row collapse master-bottom-switch-zone">
+              <matrix-route class="playback-source playback-select" initvalues="clockSources"  callback="MatrixPoolCB"></matrix-route>
+      </div>
+      <div class="row collapse master-bottom-switch-zone">
+              <matrix-route class="playback-source playback-select" initvalues="usbSources"  callback="MatrixPoolCB" ></matrix-route>
+      </div>
+      <div class="row collapse master-bottom-switch-zone">
+              <i ng-show="syncstatus" class="ajm-sync-status ajm-status-success">Sync On</i>
+              <i ng-hide="syncstatus" class="ajm-sync-status ajm-status-error">Sync Off</i>
+      </div>
+  </div>
+
+</div>
