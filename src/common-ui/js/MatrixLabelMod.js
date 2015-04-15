@@ -28,7 +28,7 @@
 
 var newModule = angular.module('ajm-matrix-label', []);
 
-newModule.provider('LabelByUid',  labelByUid);
+newModule.provider('LabelByUid', labelByUid);
 
 function labelByUid () {
     this.labelbyuid = [];
@@ -83,6 +83,7 @@ newModule.directive('matrixLabel', ["$log", 'LabelByUid', function($log, LabelBy
     var ngoptions = "{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }";
     var template = '<input type="text" class="ajm-matrix-label" ng-model="label" list={{list}} placeholder={{placeholder}} ng-model-options="' + ngoptions + '">' ;
 
+    console.log ("**** matrixLabel init");
 
     function link (scope, element, attrs, model) {
 

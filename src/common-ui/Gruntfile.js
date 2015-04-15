@@ -47,7 +47,7 @@ module.exports = function (grunt) {
          files: [{
            expand: true,
            flatten: true,
-           src:  'ajg',
+           src:  ['ajg','*html'],
            dest: '../../www/mixers',
            filter: 'isFile'
          },{

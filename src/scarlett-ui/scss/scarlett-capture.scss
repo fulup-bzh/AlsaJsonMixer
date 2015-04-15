@@ -14,4 +14,9 @@
     width: 58rem !important;
     padding-right: 1rem;
   }
+
+  // did not found out why ajm-matrix-volumes is 1.5rem too big !!!
+  .ajm-capture-volumes {
+    margin: .3rem 0 -1rem 0 ;
+  }
 }

@@ -80,21 +80,21 @@
       max-width: 15rem;
       text-align: right;
       display: inline-block;
-
     }
+
     .ajm-session-info {
       max-width: 35rem;
       width: 100%;
       text-align: left;
     }
 
-    .ajm-session-save {
-      margin: 0 .5rem 0 .5rem;
-      font-size: 1.3rem;
+    .ajm-session-save, .ajm-session-refresh {
+      margin: 0 .5rem 0rem .5rem;
+      font-size: 1rem;
       line-height: 1.3rem;
     }
 
-    .ajm-session-save:hover, .session-refresh:hover, .sndcard-name:hover {
+    .ajm-session-save:hover, .ajm-session-refresh:hover, .ajm-sndcard-name:hover {
       @include hover-background;
       color: rgb(255, 51, 153);
     }

@@ -170,7 +170,7 @@ function scarletteCapture($log, CtrlByNumid) {
                     lines: lines
                 };
 
-                //$log.log ("[idx]", idx, "stereo line=", linesgroup)
+                //log.log ("[idx]", idx, "stereo line=", linesgroup)
                 matrixRoutes.push(linesgroup);
             }
 
@@ -179,7 +179,7 @@ function scarletteCapture($log, CtrlByNumid) {
                 var mixname=[];
                 var mixvols= [];
 
-                // $log.log ("volumes= ", initvalues.mixes[idx]);
+                // log.log ("volumes= ", initvalues.mixes[idx]);
                 // build mix name
                 for (var jdx = 0; jdx < scope.mixerGroup; jdx++) {
                     mixname.push (initvalues.mixes [idx+jdx].name);
@@ -228,7 +228,7 @@ function scarletteCapture($log, CtrlByNumid) {
 
             //$log.log ("matrixSources=" , matrixSources);
             //$log.log ("matrixRoutes="  , matrixRoutes);
-            $log.log ("matrixMixVolsMix=" , matrixMixVols);
+            //$log.log ("matrixMixVolsMix=" , matrixMixVols);
         }; // end init widget
 
 
@@ -244,6 +244,10 @@ function scarletteCapture($log, CtrlByNumid) {
            free: function (pool, channel, lineIdx) {scope.freeLinePool (pool, channel, lineIdx)}
         };
 
+        // call each time a volume slider moves
+        scope.ActivateCtrlsCB = function (numids, value) {
+            scope.callback (numids, [value]); // push request to ScarlettMixerMod values should be an array
+        };
 
         scope.mixerGroup = parseInt (attrs.mixerGroup) || 2;
         scope.faderGroup = parseInt (attrs.faderGroup) || 2;

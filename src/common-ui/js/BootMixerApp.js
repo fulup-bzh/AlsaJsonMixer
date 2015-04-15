@@ -17,10 +17,8 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
- References:
+ References: http://www.sagarganatra.com/2014/08/lazy-loading-angularjs-components-using-providers.html
 
-
- $Id: $
  */
 
 
@@ -29,18 +27,27 @@
 var ngapp = angular.module('mixer-ui-app', [
         'ngRoute', 'ui-notification', 'bzm-range-slider', 'mm.foundation', 'ajm-knob-knob', 'ajm-playback-switch', 'ajm-register-numid'
         ,'ajm-mixer-connect', 'ajm-monitor-gateway', 'ajm-matrix-route','ajm-matrix-fader', 'ajm-master-volume', "ajm-matrix-label"
-    ]
-);
+    ]);
 
 ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide',
-    function($routeProvider, $locationProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
+    function($routeProvider, $locationProvider, $controllerProvider, $compileProvider, $provide) {
 
         // Hack for JS lazy load http://ify.io/lazy-loading-in-angularjs/
         ngapp.addController = $controllerProvider.register;
         ngapp.addDirective  = $compileProvider.directive;
         ngapp.routeProvider = $routeProvider;
-        ngapp.filterProvider= $filterProvider;
         ngapp.provide       = $provide;   // https://docs.angularjs.org/api/auto/service/$provide
+
+        var scarlettdep;
+        if (AJG_GLOBAL_DEBUG) {
+            scarlettdep = [   // list JS to load this this route
+                '/mixers/dev/ScarlettMasterMod.js',
+                '/mixers/dev/ScarlettMixerMod.js',
+                '/mixers/dev/ScarlettCaptureMod.js'
+            ];
+        } else {
+            scarlettdep = ['/mixers/js/scarlett-mixer.js'];
+        }
 
         $routeProvider.
             when('/', {
@@ -50,19 +57,13 @@ ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$co
                 templateUrl: 'partials/scarlett-mixer.html',
                 controller:  'ScarlettMixerController as Scarlett',
                 resolve:  {
-                    deps:function($q, $rootScope) {
+                    deps: ['$q', '$rootScope', function($q, $rootScope) {
                         var deferred = $q.defer();
-                        var dependencies = [   // list JS to load this this route
-                            '/mixers/dev/ScarlettMasterMod.js',
-                            '/mixers/dev/ScarlettMixerMod.js',
-                            '/mixers/dev/ScarlettCaptureMod.js'
-                        ];
-
                         // dependencies are loaded so resolve the promise https://github.com/ded/script.js
-                        $script (dependencies, function() {$rootScope.$apply(function() {deferred.resolve();});
+                        $script (scarlettdep, function() {$rootScope.$apply(function() {deferred.resolve();});
                         });
                         return deferred.promise;
-                    }}
+                    }]}
             }).
 
             // aliases to sound cards [lowercase cardname, ' ' --> '-']
@@ -73,4 +74,4 @@ ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$co
         // Warning HTML5 mode require to apply rewrite rules at server level
         // it also imposes to define in index.html <base href="/mixers/">
         // $locationProvider.html5Mode(true).hashPrefix('!');
-    }]);
+}]);

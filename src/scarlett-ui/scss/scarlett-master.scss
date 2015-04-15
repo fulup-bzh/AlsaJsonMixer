@@ -4,9 +4,11 @@
 
   .playback-source {
     display: block;
+    padding: 0 .5rem 0 0;
 
     .ajm-matrix-route {
       display: inline-block;
+      padding: 0.2rem .2rem .1rem .2rem;
       width: 100%;
       >input {
         width: inherit;
@@ -28,8 +30,9 @@
   .playback-source.playback-select {
     .ajm-route-label,.ajm-route-select {
       width: 100%;
+      padding: .2rem;
       display: block;
-      >select text-align: center;
+      >select {text-align: center};
     }
   }
 

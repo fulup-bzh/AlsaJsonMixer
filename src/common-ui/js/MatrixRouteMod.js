@@ -28,7 +28,7 @@
 
 var newModule = angular.module('ajm-matrix-route', []);
 
-newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
+newModule.directive('lineInput', ["$log", function($log) {
 
     var optionTemplate = document.createElement('option');
     // do not use ng-model in select as it break initial value setting
@@ -53,7 +53,7 @@ newModule.directive('lineInput', ["$log", '$timeout', function($log, $timeout) {
         // call when internal model value changes
         scope.initWidget = function (initvalues) {
 
-            if (scope.initvalues.numid > 200) $log.log ("**** scope.initWidget initvalues=", initvalues)
+            // $log.log ("scope.initWidget initvalues=", initvalues)
             scope.channel   = initvalues;
             scope.selection = initvalues.value;
             scope.selectElem.value = initvalues.value;
