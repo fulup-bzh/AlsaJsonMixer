@@ -31,15 +31,16 @@ ngapp.addDirective ('scarlettMaster', ["$log",  scarlettMaster]);
 function scarlettMaster($log) {
 
     function link(scope, element, attrs) {
-        scope.matrixPlaybackPool = []; // global share playback Master source route pool
-        scope.clockSourcesPool  = [];   // unique but uses matrix-source that require a pool
-        scope.usbSourcesPool    = [];   // Unique but uses matrix-source that require a pool
 
-        scope.idxcounter = 1;  // start 1st switch label at one
         scope.selectElem = element[0].firstChild; // access set initial value manually to bypass Angular limitation
 
         // call when internal model value changes
         scope.initWidget = function (initvalues) {
+            scope.matrixPlaybackPool = []; // global share playback Master source route pool
+            scope.clockSourcesPool  = [];   // unique but uses matrix-source that require a pool
+            scope.usbSourcesPool    = [];   // Unique but uses matrix-source that require a pool
+
+            scope.idxcounter = 1;  // start 1st switch label at one
             var enumerations;
             //$log.log("scarletteMaster initvalues=", initvalues);
 

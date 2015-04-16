@@ -42,7 +42,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
 
             // we use left mix as reference and compute right mix from balance level
             var refMix =  initvalues[0];
-            var range  = (refMix[0].notMore - refMix[0].notLess) /2;
+            scope.range  = (refMix[0].ctrl.notMore - refMix[0].ctrl.notLess);
 
             // check if mixes are groupe in stereo
             if (refMix[0].length  == 2) scope.stereo = true;
@@ -130,6 +130,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
             // ignore initial slider settings
             if (slider == undefined) return (value);
 
+
             // if capture are in sync let's move all channels together
             if (scope.prefad.PFLM) {
                 // loop on associative array to check which slider should be unsync
@@ -157,10 +158,13 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
 
             // send value to every concerned channel control numid
             // console.log ("numids=%j value=%d", targets, value)
-            if (!scope.ismuted) scope.callback (targets, value);
+            // provide some non linear curve for volume sliders [would need help to improved]
+            var normalized = parseInt (Math.sqrt (value/scope.range)*scope.range);
+            // console.log ("normalized=%d value=%d range=%d", normalized, value, scope.range);
+            if (!scope.ismuted) scope.callback (targets, normalized);
 
             // return value displays within handle
-            return (value);
+            return (normalized);
         };
 
 

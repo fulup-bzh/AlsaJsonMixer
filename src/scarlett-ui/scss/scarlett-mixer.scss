@@ -75,6 +75,9 @@
       @include label-success;
     }
 
+    .ajm-matrix-label {
+      margin: 0 !important;
+    }
 
     .ajm-session-name {
       max-width: 15rem;
@@ -89,9 +92,8 @@
     }
 
     .ajm-session-save, .ajm-session-refresh {
-      margin: 0 .5rem 0rem .5rem;
+      margin: 0rem 1rem .2rem .5rem;
       font-size: 1rem;
-      line-height: 1.3rem;
     }
 
     .ajm-session-save:hover, .ajm-session-refresh:hover, .ajm-sndcard-name:hover {

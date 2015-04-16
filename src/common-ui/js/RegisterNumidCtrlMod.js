@@ -63,6 +63,16 @@ function AjgNumidCtrlPool () {
         });
     };
 
+    // Reset all ctrl values to null
+    this.getNumids = function () {
+        var numids=[];
+        var pool =  this.ctrlbynumid;
+        Object.keys(this.ctrlbynumid).forEach(function(numid, idx) {
+           numids.push (parseInt (numid));
+        });
+        return (numids);
+    };
+
     // return complete pool as an array for session saving
     this.getPool = function () {
         var response = [];

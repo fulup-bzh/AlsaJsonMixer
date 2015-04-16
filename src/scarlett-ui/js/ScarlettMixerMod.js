@@ -37,15 +37,23 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
 
 
     // load session list
-    scope.GetSessionsList = function (resetmod) {
+    scope.ResetSession = function (resetmod) {
 
         // send AJAX request to Alsa-Json-Gateway
         var query= {request:"session-list", cardid: scope.cardid};
         var handler = $http.get('/jsonapi', {params: query});
 
-        // Clear session call from UI, remove all existing label and restore control from effective sndcard value
-        if (resetmod > 0) LabelByUid.reset ();
-        if (resetmod > 1) scope.GetSndControls();
+        // position every sndcontrol to zero
+        if (resetmod > 1) {
+            var numids = CtrlByNumid.getNumids();
+            scope.SendAlsaCtrlsCB (numids, [0,0,0,0,0,0,0,0,0,0,0,0])
+        }
+
+        // Clear session and reload current effective value from sndcard
+        if (resetmod > 0) {
+            LabelByUid.reset ();
+            scope.GetSndControls();
+        }
 
         handler.error(function(status, errcode, headers) {
             alert ("Fail to upload session list [sndcard=" + scope.cardid + "from AlsaJsonGateway")
@@ -317,8 +325,13 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
     scope.SendAlsaCtrlsCB = function (numids, values) {
 
       // send AJAX request to Alsa-Json-Gateway
-      var query= {request:"ctrl-set-many", cardid: scope.cardid, numids: JSON.stringify(numids), value:JSON.stringify(values)};
-      var handler = $http.get('/jsonapi', {params: query});
+      var query= {request:"ctrl-set-many", cardid: scope.cardid, value:JSON.stringify(values)};
+      var handler = $http({
+        method : 'POST',
+        url    : '/jsonapi',
+        params :  query,       // URL query
+        data   :  JSON.stringify(numids) // POST data in JSON
+  });
 
       // Hoops hack for source sync status update
       if (numids[0] === 207) $timeout (scope.checkSyncStatus, 1000);
@@ -338,7 +351,7 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
 
         // extract sndcard index from URL's query
         scope.cardid = $location.search().card;
-        scope.GetSessionsList ();
+        scope.ResetSession (0);
         scope.GetSndControls ();
     };
 

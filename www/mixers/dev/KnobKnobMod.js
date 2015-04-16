@@ -20,7 +20,7 @@ newModule.directive('knobKnob', ["$log", "$timeout", "CtrlByNumid", function($lo
 		    + '<i class="ajm-knob-top"></i><div class="ajm-knob-base" ></div>'
 			+ '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="ctrl"></range-slider>'
     		+ '</div>'
-			+ '<span class="ajm-knob-value">{{value}}</span>'
+			+ '<span class="ajm-knob-value">{{normalized}}</span>'
 			+ '</div>';
 
 	function link(scope, elem, attrs, model) {
@@ -59,8 +59,13 @@ newModule.directive('knobKnob', ["$log", "$timeout", "CtrlByNumid", function($lo
 				values.push (value);
 			}
 
+			// provide some exponential approximation to smooth the curve
+			// ref: http://www.dr-lex.be/info-stuff/volumecontrols.html  exp10((min - max) / 6000.0);
+			scope.normalized = parseInt (Math.sqrt (value/scope.range)*scope.range);
+			// console.log ("normalized=%d value=%d range=%d", normalized, value, scope.range)
+
 			// if not initial state and callback define, let's report value
-			if (slider && scope.callback) scope.callback (scope.channel.numid, values);
+			if (slider && scope.callback) scope.callback (scope.channel.numid, [scope.normalized, scope.normalized]);
 		};
 
 		scope.rotate = function (angle) {

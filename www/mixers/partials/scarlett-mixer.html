@@ -5,7 +5,7 @@
 
 			<matrix-label class="ajm-session-name" list="sessions-list" placeholder="select session name" title="AJG Session Name"
 						  callback="Scarlett.SessionLoad" initvalues="Scarlett.SessionLabelName" labelpool="Scarlett.SessionLabelPool"></matrix-label>
-			<i class="ajm-session-refresh fa fa-refresh" ng-click="Scarlett.GetSessionsList(1)"></i>
+			<i class="ajm-session-refresh fa fa-refresh" ng-click="Scarlett.ResetSession(1)"></i>
 
 			<datalist id="sessions-list" >
 				<option data-ng-repeat="item in Scarlett.SessionsList" value="{{item.session}}" label="{{item.session + ' (' + item.date +')'}}">
@@ -13,7 +13,7 @@
 
 			<matrix-label class="ajm-session-info show-for-large-up " title="Gateway Session Info" placeholder="Misc information about session" initvalues="Scarlett.SessionLabelInfo"></matrix-label>
 			<i class="ajm-session-save fa fa-floppy-o" ng-click="Scarlett.SessionStore()"></i>
-			<i class="ajm-sndcard-name" title="{{Scarlett.sndcard.info}}" ng-click="Scarlett.GetSessionsList(2)">{{Scarlett.sndcard.name}}</i>
+			<i class="ajm-sndcard-name" title="{{Scarlett.sndcard.info}}" ng-click="Scarlett.ResetSession(2)">{{Scarlett.sndcard.name}}</i>
 
 			<monitor-status class="ajm-sndcard-status"></monitor-status>
   	    </div>
