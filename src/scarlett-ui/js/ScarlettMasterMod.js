@@ -41,7 +41,7 @@ function scarlettMaster($log) {
         // call when internal model value changes
         scope.initWidget = function (initvalues) {
             var enumerations;
-            $log.log("scarletteMaster initvalues=", initvalues);
+            //$log.log("scarletteMaster initvalues=", initvalues);
 
             // switches are simple and UI take them as they are
             scope.switches= initvalues.switches;
@@ -65,7 +65,7 @@ function scarlettMaster($log) {
                 sources.push (scope.ProcessSource(initvalues.sources[idx], scope.matrixPlaybackPool));
             }
             scope.playSources= sources;
-            $log.log ("master playback sources=", sources);
+            //$log.log ("master playback sources=", sources);
 
             // Process Source Clock switch
             enumerations  = initvalues.switches.clock.ctrl.enums;
@@ -73,7 +73,7 @@ function scarlettMaster($log) {
                 scope.clockSourcesPool.push ({id: idx , name:   enumerations [idx], used: false, options: []});
             }
             scope.clockSources = scope.ProcessSource (initvalues.switches.clock, scope.clockSourcesPool);
-            $log.log ("master clockswitch=", scope.clockSources);
+            //$log.log ("master clockswitch=", scope.clockSources);
 
             // Process Source Usb switch
             enumerations  = initvalues.switches.usb.ctrl.enums;
@@ -81,7 +81,7 @@ function scarlettMaster($log) {
                 scope.usbSourcesPool.push ({id: idx , name:   enumerations [idx], used: false, options: []});
             }
             scope.usbSources = scope.ProcessSource (initvalues.switches.usb,  scope.usbSourcesPool);
-            $log.log ("master usbswitch=", scope.usbSources);
+            //$log.log ("master usbswitch=", scope.usbSources);
 
             // Check Sync Status and display result on UI
             scope.syncstatus = initvalues.switches.syncon.value[0];
@@ -165,7 +165,6 @@ function scarlettMaster($log) {
         // call each time a volume slider moves
         scope.ActivateCtrlsCB = function (numid, values) {
 
-            $log.log ("scarlettMaster CB numids=%j value=%d", [numid], values);
             scope.callback ([numid], values); // push request to ScarlettMixerMod values should be an array
 
         };

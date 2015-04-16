@@ -145,7 +145,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
                 var handle = slider.getCbHandle();
                 targets.push(handle.numid); // main channel is always part of tageted control
 
-                $log.log("FaderSliderCB numid=", handle.numid, " value=", value, 'handle=', handle);
+                //$log.log("FaderSliderCB numid=", handle.numid, " value=", value, 'handle=', handle);
 
                 // if playback mix are in sync move both playback channels
                 if (scope.syncMix [handle.idxin]) {
