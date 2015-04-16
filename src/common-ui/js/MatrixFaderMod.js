@@ -38,7 +38,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
         scope.initWidget = function(initvalues) {
 
             if (!initvalues) return; // make sure we have some data to work with
-            $log.log ("matrixFader initvalues=", initvalues)
+            // $log.log ("matrixFader initvalues=", initvalues)
 
             // we use left mix as reference and compute right mix from balance level
             var refMix =  initvalues[0];
