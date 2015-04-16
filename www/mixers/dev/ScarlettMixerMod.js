@@ -191,13 +191,15 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
                     mSwitches.push (control);
                 }
 
+
                 // Master 1 (Monitor) Playback Volume
                 if (name[0] === 'master' && name[name.length-1] === "volume") {
                     mVolumes.push (control);
                 }
 
+                // Master 2L (Headphone 1) Source Playback Enu [warning 'm' missing !!!]
                 // Master 1R (Monitor) Source Playback Enum
-                if (name[0] === 'master' && name[name.length-1] === "enum") {
+                if (name[0] === 'master' && name[name.length-3] === "source" && name[name.length-2] === "playback") {
                     mSources.push (control);
                 }
 

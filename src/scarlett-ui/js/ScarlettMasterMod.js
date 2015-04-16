@@ -88,29 +88,12 @@ function scarlettMaster($log) {
 
         };
 
-        scope.checkSyncStatus = function () {
-
-        };
-
-        // manage capture and route line pools
-        scope.updatePool=function (linesPool, lineIdx, used) {
-            // change line usage status
-            linesPool[lineIdx].used = used;
-
-            // update select source options to disable used lines
-            for (var idx=0; idx < linesPool[lineIdx].options.length; idx++) {
-                linesPool[lineIdx].options[idx].disabled=used;
-            }
-        };
-
+        // Each line of channel playback can be reused not need to update pool
         scope.takeLinePool= function (linesPool, channel, lineIdx) {
             if (lineIdx !== channel.value) scope.callback ([channel.numid], [lineIdx]);
-            if (lineIdx != 0 && !linesPool[lineIdx].used) scope.updatePool (linesPool, lineIdx, true);
-
         };
 
         scope.freeLinePool= function (linesPool, channel, lineIdx) {
-            if (lineIdx !== channel.value) scope.updatePool (linesPool, lineIdx, false);
             if (lineIdx != 0) scope.callback ([channel.numid], [0]);
         };
 

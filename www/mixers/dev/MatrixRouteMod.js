@@ -148,6 +148,7 @@ newModule.directive('matrixRoute', ["$log", function($log) {
 
             // free channel 1st in case same one was reselected
             if (!initphase) {
+                $log.log ("free channel ", channel.value )
                 scope.callback.free (pool, channel, channel.value);
             }
 

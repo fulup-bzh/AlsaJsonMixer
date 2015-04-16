@@ -1,14 +1,13 @@
 
 .ajm-scarlett-master {
- background-color: pink !important;
 
   .playback-source {
     display: block;
-    padding: 0 .5rem 0 0;
+    margin: -.3rem 0 -.3rem 0;
 
     .ajm-matrix-route {
       display: inline-block;
-      padding: 0.2rem .2rem .1rem .2rem;
+      padding: 0;
       width: 100%;
       >input {
         width: inherit;
@@ -17,6 +16,7 @@
 
     .ajm-route-label {
       display: inline-block;
+      margin: 0;
       width: 67%;
     }
 
@@ -28,9 +28,13 @@
   }
 
   .playback-source.playback-select {
+    @include box-decoration;
+    margin-bottom: .5rem;
+  };
+
+  .playback-source.playback-select {
     .ajm-route-label,.ajm-route-select {
       width: 100%;
-      padding: .2rem;
       display: block;
       >select {text-align: center};
     }

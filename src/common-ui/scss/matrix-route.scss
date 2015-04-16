@@ -25,7 +25,7 @@
 
 
 .ajm-matrix-route {
-  @include widget-decoration;
+
   width: 100%;
 
   // Label is an input zone we need to overwrite Foundation defaults
@@ -47,4 +47,8 @@
     -webkit-direction: rtl;
     text-align: left;
   }
+}
+
+.ajm-stereo-input >.ajm-matrix-route{
+  @include widget-decoration;
 }
