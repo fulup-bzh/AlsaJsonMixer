@@ -12,11 +12,11 @@
 
 var newModule = angular.module('ajm-knob-knob', []);
 
-newModule.directive('knobKnob', ["$log", "CtrlByNumid", function($log, CtrlByNumid) {
+newModule.directive('knobKnob', ["$log", "$timeout", "CtrlByNumid", function($log, $timeout, CtrlByNumid) {
 
 	var template = '<div class="ajm-knob"  > '
 			+ '<matrix-label class="ajm-knob-title" initvalues="channel"></matrix-label>'
-	        + '<div class="ajm-knob-button" ng-mouseover="mouseEnter(1)" ng-mouseleave="mouseEnter(0)" ng-mousedown="toggleState()"  > '
+	        + '<div class="ajm-knob-button" ng-mouseover="mouseEnter()" > '
 		    + '<i class="ajm-knob-top"></i><div class="ajm-knob-base" ></div>'
 			+ '<range-slider ng-show="actif || enter" formatter="setValue" callback="setValue" initvalues="ctrl"></range-slider>'
     		+ '</div>'
@@ -79,11 +79,12 @@ newModule.directive('knobKnob', ["$log", "CtrlByNumid", function($log, CtrlByNum
 			}
 		};
 
-		// knob is hover
-		scope.mouseEnter =function (hover){
-			// scope.callback (scope.value, scope.knobid, scope.handle);
-			if (hover) scope.enter = true;
-			else scope.enter=false;
+		// knob is hover display slider and remove after 3s
+		scope.mouseEnter =function (){
+			scope.enter = true;
+			// remove slider after 3s
+			$timeout.cancel (scope.timeout);
+			scope.timeout= $timeout (function(){scope.enter =false}, 3000);
 		};
 
 		// initialize widget

@@ -38,7 +38,7 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
         scope.initWidget = function(initvalues) {
 
             if (!initvalues) return; // make sure we have some data to work with
-            // $log.log ("matrixFader initvalues=", initvalues)
+            $log.log ("matrixFader initvalues=", initvalues)
 
             // we use left mix as reference and compute right mix from balance level
             var refMix =  initvalues[0];
@@ -60,12 +60,12 @@ newModule.directive('matrixFader', ["$log", '$timeout', 'CtrlByNumid', function(
             var stereoOut = (initvalues[0].length === 2);
 
             for (var idx=0; idx < initvalues.length; idx ++) {
-                if (stereoOut) scope.syncMix [idx] = true;  // by default stereo mix are synchronized
+                if (stereoOut) scope.syncMix [idx] = false;  // by default stereo mix are synchronized
 
                 var playback = initvalues [idx];
                 for (var jdx=0; jdx < playback.length; jdx ++) {
                     var current =  playback [jdx];
-                    scope.ctrlById [playback [jdx].channel.numid] = playback [jdx].ctrl;
+                    scope.ctrlById [current.channel.numid] = current.ctrl;
                 }
             }
         };

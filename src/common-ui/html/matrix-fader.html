@@ -4,10 +4,10 @@
         <div ng-repeat="VolumeGroup in MixerModel">
             <div class="ajm-matrix-fader-channel left">
                 <div class="ajm-matrix-fader-fader" ng-repeat="faderline in VolumeGroup">
-                <range-slider vertical="true" class="radius " title="{{faderline.name}}" formatter="FaderSliderCB" callback="FaderSliderCB" inithook="SliderInit"
-                              initvalues="faderline.ctrl" cbhandle="faderline.channel" disable="{{$index !== 0}}" display-target="handle"></range-slider>
+                <range-slider vertical="true" class="radius not-sync" title="{{faderline.name}}" formatter="FaderSliderCB" callback="FaderSliderCB" inithook="SliderInit"
+                              initvalues="faderline.ctrl" cbhandle="faderline.channel" display-target="handle"></range-slider>
                 </div>
-                <span ng-click="StereoMix($event,$index)" class="ajm-matrix-fader-button pfl-mono pfl-button-actif">&infin;</span>
+                <span ng-click="StereoMix($event,$index)" class="ajm-matrix-fader-button pfl-mono">&infin;</span>
             </div>
         </div>
     </div>
