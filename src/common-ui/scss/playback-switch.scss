@@ -27,7 +27,7 @@
 .playback-switch-table {
   display: block;
   @include box-decoration;
-    padding: 0 0 0 .5rem;
+    padding: 0 0 .5rem .5rem;
     margin-bottom: 0.5rem;
 
   .switch-title {
