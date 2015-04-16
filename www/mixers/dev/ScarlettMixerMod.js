@@ -103,8 +103,6 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
                 return;
             }
 
-            $log.log("SessionLoad data=", response);
-
             // session was loaded
             element.removeClass ("ajg-error");
             element.addClass ("ajg-success");
@@ -279,8 +277,6 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
            ajgtype: "AJG_infos",
            data   : labelspool
        };
-
-        $log.log ("session=", sessioninfo, "pool=", sessioninfo);
 
         // send AJAX request to Alsa-Json-Gateway
        var query= {request:"session-store", cardid: scope.cardid, session: sessionname};
