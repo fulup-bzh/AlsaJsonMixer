@@ -34,7 +34,7 @@ function ajgMasterVolume ($log) {
 
     var template = '<div class="ajm-master-volume"> '
         + '<p class="ajm-volume-title">"{{panelTitle}}"</p>'
-        + '<knob-knob ng-repeat="volume in volumes"  title="{{volume.channel.name}}" callback="callback" '
+        + '<knob-knob ng-repeat="volume in volumes"  title="{{volume.channel.label}}" callback="callback" '
         + '  class="ajm-volume-knob valuecount-{{volume.channel.count}}" initvalues="volume"></knob-knob>'
         + '</div>';
 

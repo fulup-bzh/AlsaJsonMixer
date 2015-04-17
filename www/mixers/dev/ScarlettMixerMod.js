@@ -265,7 +265,6 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
                 }
             };
         });
-
     };
 
     scope.SessionStore =function () {

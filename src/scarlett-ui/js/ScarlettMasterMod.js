@@ -128,7 +128,7 @@ function scarlettMaster($log) {
                     actif  : channel.actif,
                     count  : channel.ctrl.count,
                     numid  : channel.numid,
-                    name  : channel.name + " numid=" +channel.numid,
+                    label  : channel.name + " numid=" +channel.numid,
                     uid    : "VolId:" + channel.numid
                 },
                 ctrl   : { // crtrl sub-obj maps with sliders initialisation API
