@@ -28,7 +28,7 @@
 
 var newModule = angular.module('ajm-matrix-route', []);
 
-newModule.directive('lineInput', ["$log", function($log) {
+newModule.directive('lineInput', ["$log", "CtrlByNumid", function($log, CtrlByNumid) {
 
     var optionTemplate = document.createElement('option');
     // do not use ng-model in select as it break initial value setting
@@ -57,6 +57,14 @@ newModule.directive('lineInput', ["$log", function($log) {
             scope.channel   = initvalues;
             scope.selection = initvalues.value;
             scope.selectElem.value = initvalues.value;
+
+            CtrlByNumid.register (scope.channel.numid, scope);
+        };
+
+        // method call from CtrlByNumid to restore session
+        scope.setValue = function (value) {
+          scope.selection =  value;
+          scope.selectElem.value =  value;
         };
 
         // we need to wait for matrixLinesPool to be ready before building selection list

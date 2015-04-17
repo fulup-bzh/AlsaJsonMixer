@@ -37,7 +37,7 @@ newModule.directive ('mixerConnect', ["$log", '$timeout', '$http','$location','$
         + '<monitor-status class="ajm-connect-status" icon={{icon}}"></monitor-status></div>'
         + '<div  ng-repeat="sndcard in sndcards">'
         + '<div  title="{{sndcard.info}}" ng-click="selectCard($index)"> '
-        + '<div class="row ajm-connect-sndcard ajm-{{sndcard.cardid}}">'
+        + '<div class="row ajm-connect-sndcard ajm-{{sndbrand (sndcard)}}">'
         + '<div class="small-10 columns">'
         + '<span class="ajm-connect-name"> {{sndcard.name}} </span>'
         + '</div>'
@@ -51,6 +51,11 @@ newModule.directive ('mixerConnect', ["$log", '$timeout', '$http','$location','$
         ;
 
     function link (scope, element, attrs) {
+
+        scope.sndbrand = function (sndcard) {
+            var brand = sndcard.name.split (' ') [0];
+            return brand.toLowerCase();
+        };
 
         scope.getCards = function () {
 

@@ -36,8 +36,7 @@ function scarletteCapture($log, CtrlByNumid) {
 
     function link (scope, elem, attrs, model) {
 
-        scope.matrixSourcesPool = []; // inputs lines belongs to a common shared pool.
-        scope.matrixRoutesPool  = []; // output lines belongs to a common shared pool.
+
 
         // manage capture and route line pools
         scope.updatePool=function (linesPool, lineIdx, used) {
@@ -108,6 +107,10 @@ function scarletteCapture($log, CtrlByNumid) {
             var matrixSources = [];
             var matrixRoutes = [];
             var matrixMixVols = [];
+
+            // reset Shared Pool
+            scope.matrixSourcesPool = []; // inputs lines belongs to a common shared pool.
+            scope.matrixRoutesPool  = []; // output lines belongs to a common shared pool.
 
             // use 1st Capture lines to collect enums [common/shared pool for all capture/sources]
             var sourceref = initvalues.sources[1].ctrl.enums;

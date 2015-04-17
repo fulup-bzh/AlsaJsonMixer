@@ -50,7 +50,6 @@ function ajgMasterVolume ($log) {
             scope.volumes = initvalues;
         };
 
-        // initialize widget
         scope.masterid = attrs.id | "master-" + parseInt(Math.random() * 1000);
         scope.$watch('initvalues', function () { 	// init Values may arrive late
             if (scope.initvalues) scope.initWidget(scope.initvalues);
