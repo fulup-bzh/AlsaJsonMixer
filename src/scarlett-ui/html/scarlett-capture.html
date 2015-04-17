@@ -6,11 +6,9 @@
 
      <div class="ajm-scroll row collapse">
         <tabset class="ajm-capture-volumes">
-            <div  ng-repeat="mixVolume in matrixMixVols">
-                <tab  heading="{{mixVolume.name}}" actif="mixVolume.actif" select="TabSelected($index)">
+                <tab  ng-repeat="mixVolume in matrixMixVols" heading="{{mixVolume.name}}" actif="mixVolume.actif" select="TabSelected($index)">
                     <matrix-fader ng-repeat="volume in mixVolume.mixvol" callback="ActivateCtrlsCB" initvalues="volume" ></matrix-fader>
                 </tab>
-            </div>
         </tabset>
     </div>
     <div class="ajm-scroll row collapse">

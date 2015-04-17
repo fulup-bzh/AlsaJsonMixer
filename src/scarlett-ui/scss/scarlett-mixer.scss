@@ -46,7 +46,7 @@
         @include hover-background;
       }
     }
-    .actif {
+    .active {
       > a {
         @include actif-background;
       }
@@ -100,7 +100,6 @@
       @include hover-background;
       color: rgb(255, 51, 153);
     }
-
 
     .ajm-sndcard-status {
       width: auto;

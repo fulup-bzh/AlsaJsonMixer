@@ -83,8 +83,6 @@ newModule.directive('matrixLabel', ["$log", 'LabelByUid', function($log, LabelBy
     var ngoptions = "{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }";
     var template = '<input type="text" class="ajm-matrix-label" ng-model="label" list={{list}} placeholder={{placeholder}} ng-model-options="' + ngoptions + '">' ;
 
-    console.log ("**** matrixLabel init");
-
     function link (scope, element, attrs, model) {
 
         scope.setValue = function (value) {
