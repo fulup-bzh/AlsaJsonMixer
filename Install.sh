@@ -21,6 +21,7 @@ SESSIONDIR=$HOME/.ajg/sessions
 echo "------------------------------------------"
 echo "Install AJM files in $ROOTDIR"
 mkdir -p $ROOTDIR
+mkdir -p $SESSIONDIR
 
 
 if test ! -w $ROOTDIR; then
