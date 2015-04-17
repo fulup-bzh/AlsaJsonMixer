@@ -80,7 +80,7 @@ function labelByUid () {
 newModule.directive('matrixLabel', ["$log", 'LabelByUid', function($log, LabelByUid) {
 
     // warning template is not clean because of ng-moddel-options blur option.
-    var ngoptions = "{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }";
+    var ngoptions = "{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }";
     var template = '<input type="text" class="ajm-matrix-label" ng-model="label" list={{list}} placeholder={{placeholder}} ng-model-options="' + ngoptions + '">' ;
 
     console.log ("**** matrixLabel init");
