@@ -135,7 +135,7 @@ function scarletteCapture($log, CtrlByNumid) {
 
                 var linesgroup = {
                     uid  : "Numid" + JSON.stringify(numids),
-                    label: "Line " + JSON.stringify(idxs),
+                    label: "Capture " + JSON.stringify(idxs),
                     name : 'Capture Source ' + JSON.stringify(idxs),
                     matrixLinesPool: scope.matrixSourcesPool,
                     lines: lines
@@ -168,7 +168,7 @@ function scarletteCapture($log, CtrlByNumid) {
 
                 var linesgroup = {
                     uid: "Numid" + JSON.stringify(numids),
-                    label: "Route " + JSON.stringify(idxs),
+                    label: "Input " + JSON.stringify(idxs),
                     name: 'Playback Route ' + JSON.stringify(idxs),
                     matrixLinesPool: scope.matrixRoutesPool,
                     lines: lines

@@ -10,7 +10,7 @@ Current version while still in Alfa mode is fully operational and control 100% o
 On top of traditional Alsa controls, UI provides a session management mechanism to load/store configurations.
 Sessions include all settings for volumes and routing as well as custom labels given control.
 
-* Online Demo: http://breizhme.net/alsajson/mixers/ajg#/
+* Online Demo: http://breizhme.net/alsajson
 * Video   https://vimeo.com/user36538868/alsa-html5-mixer
 
 Dependencies:
