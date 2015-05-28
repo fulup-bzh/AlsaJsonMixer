@@ -14,8 +14,9 @@ Sessions include all settings for volumes and routing as well as custom labels g
 * Video   https://vimeo.com/user36538868/alsa-html5-mixer
 
 Tested on:
-* Scarlett 18i8
+* Scarlett 18i8  [reference card for this mixer]
 * Scarlett 18i20 [thanks to happy.musicmaker]
+* If you're have an other Scarlett board supported by the same ALSA driver, please update BootMixerApp.js file, and let's know about the result.
 
 Dependencies:
 * HTML5 Browser any modern version of Firefox,Chrome,Safari or even IE should do the job.
