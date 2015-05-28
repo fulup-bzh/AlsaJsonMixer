@@ -24,6 +24,10 @@ mkdir -p $ROOTDIR
 mkdir -p $SESSIONDIR
 
 
+#update javasript binaries
+echo "Updating JavaScript Minified versions"
+(cd src; ./Make.sh)
+
 if test ! -w $ROOTDIR; then
     echo "  Need root permission to write into $ROOTDIR"
     sudo cp -r --update www/* $ROOTDIR

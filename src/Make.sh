@@ -18,5 +18,4 @@ do
      if ! test -f node_modules; then ln -sf ../node_modules .; fi;
      grunt build;
   )
-  echo "done"
 done

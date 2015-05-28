@@ -1,18 +1,16 @@
 <div class="ajm-scarlett-master">
 
-  <div class="small-8 columns">
-     <div class="row collapse">
+  <div class="small-5 columns">
         <master-volume initvalues="volumes" panel-title="Playback Master Volume" callback="ActivateCtrlsCB" ></master-volume>
-     </div>
-      <div class="row collapse">
+  </div>
+  <div class="small-4 columns">
           <div  class="playback-switch-table">
               <p class="switch-title">Master Playback Route</p>
               <matrix-route ng-repeat="playbackRoute in playSources" class="playback-source" initvalues="playbackRoute"  callback="MatrixPoolCB" ></matrix-route>
           </div>
-      </div>
   </div>
 
-  <div class="small-4 columns">
+  <div class="small-3 columns">
       <div class="row collapse master-bottom-switch-zone">
           <div class="playback-switch-table">
               <p class="switch-title">Playback Switch</p>

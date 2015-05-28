@@ -35,7 +35,6 @@ function ScarlettController ($log, $location, $http, $timeout, Notification, Ctr
     scope.SessionLabelName = {uid:'session', label:'current-session'};
     scope.SessionLabelInfo = {uid:'info', label: undefined};
 
-
     // load session list
     scope.ResetSession = function (resetmod) {
 
