@@ -1,12 +1,11 @@
 {
-  "name": "datepicker-js-css-template",
+  "name": "alsa-json-mixer",
   "version": "0.0.1",
   "devDependencies": {
     "grunt": "*",
     "grunt-contrib-watch": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-copy": "*",
-
     "grunt-sass": "*"
   }
 }

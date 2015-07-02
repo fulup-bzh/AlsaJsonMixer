@@ -51,7 +51,7 @@ function scarletteCapture($log, CtrlByNumid) {
 
         scope.takeLinePool= function (linesPool, channel, lineIdx) {
             if (lineIdx !== channel.value) scope.callback ([channel.numid], [lineIdx]);
-            if (lineIdx != 0 && !linesPool[lineIdx].used) scope.updatePool (linesPool, lineIdx, true);
+            if (lineIdx != 0) scope.updatePool (linesPool, lineIdx, true);
         };
 
         scope.freeLinePool= function (linesPool, channel, lineIdx) {

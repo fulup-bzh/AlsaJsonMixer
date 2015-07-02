@@ -16,6 +16,7 @@ Sessions include all settings for volumes and routing as well as custom labels g
 Tested on:
 * Scarlett 18i8  [reference card for this mixer]
 * Scarlett 18i20 [thanks to happy.musicmaker]
+* Scarlett 6i6   [thanks to chetwisniewski]
 * If you're have an other Scarlett board supported by the same ALSA driver, please update BootMixerApp.js file, and let's know about the result.
 
 Dependencies:

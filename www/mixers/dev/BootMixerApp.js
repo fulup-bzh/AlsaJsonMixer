@@ -69,6 +69,7 @@ ngapp.config(['$routeProvider', '$locationProvider', '$controllerProvider', '$co
             // aliases to sound cards [lowercase cardname, ' ' --> '-']
             when('/scarlett-18i8-usb',  {redirectTo: '/scarlett'}).
             when('/scarlett-18i20-usb', {redirectTo: '/scarlett'}).
+            when('/scarlett-6i6-usb', {redirectTo: '/scarlett'}).
 
             otherwise({redirectTo: '/'});
 
