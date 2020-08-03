@@ -3,6 +3,7 @@
 module.exports = function (grunt) {
   'use strict';
 
+  const sass = require('node-sass');
   // Default task.
   grunt.registerTask('build',   ['sass','uglify','copy']);
   grunt.registerTask('default', ['build','watch']);
@@ -19,6 +20,9 @@ module.exports = function (grunt) {
 
     // SASS plugin is used for CSS
     sass: {
+      options: {
+        implementation: sass
+      },
       dist: {
         options: {
           outputStyle: 'compressed'
