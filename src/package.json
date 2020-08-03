@@ -6,6 +6,7 @@
     "grunt-contrib-watch": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-copy": "*",
-    "grunt-sass": "*"
+    "grunt-sass": "*",
+    "node-sass": "*"
   }
 }
