@@ -27,6 +27,11 @@ $hover-color :  rgba(204, 204, 255, .6);
 $actif-color:  rgba(255, 153, 255, .5);
 $text-color  :   darkslateblue;
 
+
+%shadow-transition {
+  transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+
 .row {
     max-width: 100% !important;
 }
